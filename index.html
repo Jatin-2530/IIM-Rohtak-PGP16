@@ -6,42 +6,27 @@
 <title>PGP16 Academic Portal · IIM Rohtak</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* ── PASTEL GREY THEME ── */
   :root{
-    --bg:#f0f0f0;          /* page background — mid grey */
-    --bg2:#e8e8e8;         /* slightly darker grey */
-    --surface:#ffffff;     /* cards / panels */
-    --surface2:#f7f7f7;    /* table header, alt rows */
-    --border:#d8d8d8;      /* subtle grey border */
-    --border2:rgba(0,0,0,.08);
-
-    --navy:#2d3748;        /* deep text */
-    --text:#374151;        /* body text */
-    --muted:#9ca3af;       /* secondary text */
-    --light:#6b7280;       /* tertiary text */
-
-    /* pastel accents */
-    --rose:#f9a8d4;        --rose-d:#e879a0;   /* pink */
-    --sky:#93c5fd;         --sky-d:#3b82f6;    /* blue */
-    --mint:#6ee7b7;        --mint-d:#059669;   /* green */
-    --lavender:#c4b5fd;    --lav-d:#7c3aed;    /* purple */
-    --peach:#fcd34d;       --peach-d:#d97706;  /* amber/gold */
-    --sage:#a7f3d0;        --sage-d:#047857;   /* sage */
-    --coral:#fca5a5;       --coral-d:#dc2626;  /* red */
-    --lilac:#ddd6fe;       --lilac-d:#6d28d9;  /* lilac */
-
-    --gold:#c9a84c;        /* IIM gold for logo only */
-    --gold2:#e8c96a;
-
+    --bg:#f0f0f0; --bg2:#e8e8e8; --surface:#ffffff; --surface2:#f7f7f7;
+    --border:#d8d8d8; --border2:rgba(0,0,0,.08);
+    --navy:#2d3748; --text:#374151; --muted:#9ca3af; --light:#6b7280;
+    --rose:#f9a8d4; --rose-d:#e879a0;
+    --sky:#93c5fd;  --sky-d:#3b82f6;
+    --mint:#6ee7b7; --mint-d:#059669;
+    --lavender:#c4b5fd; --lav-d:#7c3aed;
+    --peach:#fcd34d; --peach-d:#d97706;
+    --sage:#a7f3d0; --sage-d:#047857;
+    --coral:#fca5a5; --coral-d:#dc2626;
+    --lilac:#ddd6fe; --lilac-d:#6d28d9;
+    --gold:#c9a84c; --gold2:#e8c96a;
     --shadow:0 2px 16px rgba(0,0,0,.08);
     --shadow-md:0 4px 24px rgba(0,0,0,.12);
   }
-
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
   /* ── GATE ── */
-  #gate{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;padding:2rem;}
+  #gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;padding:2rem;}
   #gate.hidden{display:none;}
   .gate-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.8rem 2.4rem;max-width:480px;width:100%;box-shadow:var(--shadow-md);position:relative;overflow:hidden;animation:fadeUp .6s ease;}
   .gate-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--rose),var(--sky),var(--mint),var(--lavender));}
@@ -81,10 +66,8 @@
   @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.35)}50%{box-shadow:0 0 0 14px rgba(201,168,76,0)}}
 
   /* ── APP ── */
-  #app{position:relative;z-index:1;display:none;}
+  #app{display:none;}
   #app.visible{display:block;animation:fadeIn .5s ease;}
-
-  /* HEADER */
   .header{background:var(--surface);border-bottom:1px solid var(--border);padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,.06);}
   .h-left{display:flex;align-items:center;gap:.9rem;}
   .h-emblem{width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900;color:#fff;}
@@ -92,22 +75,21 @@
   .h-title p{font-size:.7rem;color:var(--muted);}
   .h-right{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
   .user-badge{background:var(--lilac);border:1px solid var(--lilac-d);border-radius:8px;padding:.32rem .7rem;font-size:.77rem;color:var(--lilac-d);font-weight:600;}
-  .refresh-btn{padding:.32rem .7rem;background:#eff6ff;border:1px solid var(--sky);border-radius:8px;color:var(--sky-d);font-size:.74rem;cursor:pointer;transition:all .2s;font-weight:600;}
+  .refresh-btn{padding:.32rem .7rem;background:#eff6ff;border:1px solid var(--sky);border-radius:8px;color:var(--sky-d);font-size:.74rem;cursor:pointer;font-weight:600;}
   .refresh-btn:hover{background:#dbeafe;}
   .upd-label{font-size:.68rem;color:var(--muted);}
 
-  /* STATS BAR */
+  /* STATS */
   .stats-bar{display:flex;gap:.9rem;padding:1.2rem 2rem;flex-wrap:wrap;}
-  .stat-card{flex:1;min-width:110px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;box-shadow:var(--shadow);}
-  .stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+  .stat-card{flex:1;min-width:110px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;position:relative;overflow:hidden;transition:transform .2s;box-shadow:var(--shadow);}
+  .stat-card:hover{transform:translateY(-2px);}
+  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
   .stat-card:nth-child(1)::before{background:var(--rose);}
   .stat-card:nth-child(2)::before{background:var(--sky);}
   .stat-card:nth-child(3)::before{background:var(--mint);}
   .stat-card:nth-child(4)::before{background:var(--peach);}
   .stat-card:nth-child(5)::before{background:var(--lavender);}
   .stat-card:nth-child(6)::before{background:var(--sage);}
-  .stat-card:nth-child(7)::before{background:var(--lilac);}
-  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
   .stat-num{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:var(--navy);}
   .stat-lbl{font-size:.68rem;color:var(--muted);margin-top:.12rem;text-transform:uppercase;letter-spacing:.05em;}
 
@@ -135,9 +117,7 @@
   .fg input:focus,.fg select:focus{border-color:var(--sky-d);}
   .fg select option{background:var(--surface);}
   .fbtn{padding:.48rem .9rem;background:linear-gradient(135deg,var(--sky-d),var(--lav-d));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:.78rem;cursor:pointer;transition:all .2s;}
-  .fbtn:hover{opacity:.9;box-shadow:0 3px 12px rgba(59,130,246,.3);}
   .fbtn.reset{background:var(--surface2);border:1.5px solid var(--border);color:var(--muted);}
-  .fbtn.reset:hover{background:var(--border);}
 
   /* TABLE */
   .t-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
@@ -151,33 +131,26 @@
   tbody tr{border-bottom:1px solid var(--border2);transition:background .12s;cursor:pointer;}
   tbody tr:hover{background:#f0f9ff;}
   tbody tr.hl{background:#faf5ff;}
-  tbody td{padding:.68rem .9rem;vertical-align:middle;}
   tbody tr:last-child{border-bottom:none;}
-
-  /* RANK BADGES */
+  tbody td{padding:.68rem .9rem;vertical-align:middle;}
   .rb{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-weight:700;font-size:.8rem;font-family:'DM Mono',monospace;}
   .r1{background:linear-gradient(135deg,#fde68a,#fbbf24);color:#78350f;}
   .r2{background:linear-gradient(135deg,#e2e8f0,#cbd5e1);color:#374151;}
   .r3{background:linear-gradient(135deg,#fed7aa,#fb923c);color:#7c2d12;}
   .ro{background:var(--surface2);color:var(--muted);font-size:.72rem;border:1px solid var(--border);}
-
-  /* TEXT */
   .nc{font-weight:600;color:var(--navy);}
   .rc{font-family:'DM Mono',monospace;font-size:.73rem;color:var(--muted);}
   .tc{font-family:'Playfair Display',serif;font-weight:700;color:var(--navy);font-size:.92rem;}
-
-  /* PASTEL GRADE CHIPS */
   .gc{display:inline-block;padding:.13rem .42rem;border-radius:5px;font-size:.69rem;font-weight:700;font-family:'DM Mono',monospace;}
-  .gAp{background:#fdf2b8;color:#92400e;border:1px solid #fde68a;}       /* A+ warm yellow */
-  .gA {background:#d1fae5;color:#065f46;border:1px solid #a7f3d0;}       /* A  mint */
-  .gAm{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;}       /* A- sky */
-  .gBp{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;}       /* B+ lavender */
-  .gB {background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;}       /* B  grey */
-  .gBm{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;}       /* B- peach */
-  .gCp{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}       /* C+ amber */
-  .gC {background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}       /* C  rose */
-  .gCm{background:#fce7f3;color:#9d174d;border:1px solid #f9a8d4;}       /* C- pink */
-
+  .gAp{background:#fdf2b8;color:#92400e;border:1px solid #fde68a;}
+  .gA {background:#d1fae5;color:#065f46;border:1px solid #a7f3d0;}
+  .gAm{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;}
+  .gBp{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;}
+  .gB {background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;}
+  .gBm{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;}
+  .gCp{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}
+  .gC {background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;}
+  .gCm{background:#fce7f3;color:#9d174d;border:1px solid #f9a8d4;}
   .no-res{text-align:center;padding:3rem;color:var(--muted);font-style:italic;}
 
   /* MODAL */
@@ -185,7 +158,7 @@
   .m-overlay.open{display:flex;animation:fadeIn .2s ease;}
   .modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;position:relative;animation:scaleIn .3s ease;box-shadow:var(--shadow-md);}
   .m-close{position:absolute;top:1rem;right:1rem;width:30px;height:30px;background:var(--surface2);border:1px solid var(--border);border-radius:50%;color:var(--muted);cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-  .m-close:hover{background:#fee2e2;color:#dc2626;border-color:#fca5a5;}
+  .m-close:hover{background:#fee2e2;color:#dc2626;}
   .m-name{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--navy);margin-bottom:.25rem;}
   .m-meta{font-size:.78rem;color:var(--muted);margin-bottom:1.2rem;}
   .m-kpis{display:flex;gap:.9rem;flex-wrap:wrap;margin-bottom:1.2rem;}
@@ -197,32 +170,98 @@
   .subj-nm{font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
   .subj-st{display:flex;justify-content:space-between;align-items:center;margin-top:.32rem;}
 
-  /* PODIUM */
-  .podium{display:flex;justify-content:center;align-items:flex-end;gap:1rem;margin:2rem 0;}
-  .pb{text-align:center;}
-  .ps{border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;}
-  .p1 .ps{background:linear-gradient(135deg,#fde68a,#fbbf24);color:#78350f;height:90px;width:100px;}
-  .p2 .ps{background:linear-gradient(135deg,#e2e8f0,#94a3b8);color:#1e293b;height:65px;width:90px;}
-  .p3 .ps{background:linear-gradient(135deg,#fed7aa,#fb923c);color:#7c2d12;height:50px;width:90px;}
-  .pn{font-size:.8rem;font-weight:600;color:var(--navy);margin-bottom:.25rem;}
-  .pt{font-family:'Playfair Display',serif;font-size:1rem;color:var(--light);}
-
-  /* CHARTS */
-  .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;}
-  @media(max-width:768px){.chart-grid{grid-template-columns:1fr;}}
-  .cc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.2rem;box-shadow:var(--shadow);}
-  .cc h3{font-family:'Playfair Display',serif;font-size:.9rem;color:var(--navy);margin-bottom:.95rem;}
-  .br{display:flex;align-items:center;gap:.65rem;margin-bottom:.32rem;}
-  .bl{font-size:.68rem;color:var(--muted);width:58px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .bt{flex:1;background:var(--surface2);border-radius:4px;height:9px;overflow:hidden;border:1px solid var(--border);}
-  .bf{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--sky),var(--lavender));transition:width .8s ease;}
-  .bv{font-size:.68rem;font-family:'DM Mono',monospace;color:var(--light);width:26px;}
-
   /* SUBJECT TABS */
   .stabs{display:flex;gap:.38rem;flex-wrap:wrap;margin-bottom:.95rem;}
   .stab{padding:.27rem .62rem;border-radius:6px;font-size:.71rem;cursor:pointer;transition:all .2s;color:var(--muted);background:var(--surface);border:1.5px solid var(--border);}
   .stab:hover{border-color:var(--sky-d);color:var(--sky-d);}
   .stab.active{background:#eff6ff;border-color:var(--sky-d);color:var(--sky-d);font-weight:600;}
+
+  /* ── MY PERFORMANCE ── */
+  .perf-search-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.8rem 2rem;text-align:center;box-shadow:var(--shadow);margin-bottom:1.5rem;}
+  .perf-search-box h2{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--navy);margin-bottom:.4rem;}
+  .perf-search-box p{font-size:.85rem;color:var(--muted);margin-bottom:1.2rem;}
+  .perf-input-row{display:flex;gap:.6rem;max-width:420px;margin:0 auto;}
+  .perf-input-row input{flex:1;padding:.75rem 1rem;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;outline:none;transition:border-color .2s;}
+  .perf-input-row input:focus{border-color:var(--sky-d);box-shadow:0 0 0 3px rgba(59,130,246,.12);}
+  .perf-input-row button{padding:.75rem 1.2rem;background:linear-gradient(135deg,var(--sky-d),var(--lav-d));border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.88rem;cursor:pointer;transition:all .2s;white-space:nowrap;}
+  .perf-input-row button:hover{box-shadow:0 4px 14px rgba(59,130,246,.3);}
+
+  /* PERFORMANCE DASHBOARD */
+  #perf-dashboard{display:none;}
+  #perf-dashboard.show{display:block;animation:fadeUp .5s ease;}
+  .perf-header{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem 1.8rem;margin-bottom:1.2rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;}
+  .perf-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--lavender));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#fff;flex-shrink:0;}
+  .perf-name-block h2{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--navy);}
+  .perf-name-block p{font-size:.8rem;color:var(--muted);margin-top:.15rem;}
+  .perf-kpis{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1.2rem;}
+  .perf-kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.9rem 1.1rem;flex:1;min-width:100px;box-shadow:var(--shadow);text-align:center;position:relative;overflow:hidden;}
+  .perf-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .perf-kpi:nth-child(1)::before{background:var(--sky);}
+  .perf-kpi:nth-child(2)::before{background:var(--mint);}
+  .perf-kpi:nth-child(3)::before{background:var(--lavender);}
+  .perf-kpi:nth-child(4)::before{background:var(--peach);}
+  .perf-kpi-val{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--navy);}
+  .perf-kpi-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:.15rem;}
+
+  /* TGPA TREND CHART */
+  .trend-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1.2rem;box-shadow:var(--shadow);}
+  .trend-card h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--navy);margin-bottom:1.2rem;}
+  .trend-chart{display:flex;align-items:flex-end;justify-content:center;gap:2.5rem;height:160px;padding:0 1rem;}
+  .trend-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:.5rem;flex:1;max-width:100px;}
+  .trend-bar-outer{width:100%;display:flex;flex-direction:column;justify-content:flex-end;height:120px;}
+  .trend-bar{border-radius:8px 8px 0 0;width:100%;transition:height .8s ease;min-height:4px;position:relative;}
+  .trend-bar .trend-val{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;color:var(--navy);white-space:nowrap;}
+  .trend-label{font-size:.75rem;font-weight:600;color:var(--light);text-align:center;}
+  .trend-sublabel{font-size:.65rem;color:var(--muted);text-align:center;}
+  .trend-na{font-size:.72rem;color:var(--muted);font-style:italic;margin-top:.3rem;}
+
+  /* SUBJECT PERFORMANCE GRID */
+  .subj-perf-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1.2rem;box-shadow:var(--shadow);}
+  .subj-perf-card h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--navy);margin-bottom:1.2rem;}
+  .subj-perf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.8rem;}
+  .spg-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem;position:relative;overflow:hidden;}
+  .spg-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;border-radius:4px 0 0 4px;}
+  .spg-name{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--light);margin-bottom:.6rem;}
+  .spg-terms{display:flex;flex-direction:column;gap:.35rem;}
+  .spg-term-row{display:flex;align-items:center;justify-content:space-between;}
+  .spg-term-lbl{font-size:.7rem;color:var(--muted);width:50px;}
+  .spg-grade-wrap{display:flex;align-items:center;gap:.4rem;}
+  .spg-rank{font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;}
+
+  /* RANK TREND */
+  .rank-trend-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1.2rem;box-shadow:var(--shadow);}
+  .rank-trend-card h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--navy);margin-bottom:1.2rem;}
+  .rank-bars{display:flex;gap:1.5rem;align-items:flex-end;flex-wrap:wrap;}
+  .rank-bar-group{flex:1;min-width:80px;text-align:center;}
+  .rank-bar-outer{height:100px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:.4rem;}
+  .rank-bar-inner{width:48px;border-radius:8px 8px 0 0;background:linear-gradient(180deg,var(--sky),var(--lavender));position:relative;transition:height .8s ease;min-height:4px;}
+  .rank-bar-inner .rank-val{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;color:var(--navy);white-space:nowrap;}
+  .rank-bar-label{font-size:.74rem;font-weight:600;color:var(--light);}
+  .rank-bar-sub{font-size:.64rem;color:var(--muted);}
+  .rank-arrow{display:inline-flex;align-items:center;gap:.2rem;font-size:.72rem;font-weight:600;margin-top:.3rem;}
+  .arr-up{color:var(--mint-d);}
+  .arr-down{color:var(--coral-d);}
+  .arr-same{color:var(--muted);}
+
+  /* BEST/WORST */
+  .highlights-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1.2rem;}
+  .highlight-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.2rem;box-shadow:var(--shadow);}
+  .highlight-card h4{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.8rem;}
+  .highlight-card.best h4{color:var(--mint-d);}
+  .highlight-card.worst h4{color:var(--coral-d);}
+  .hl-subject{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--navy);}
+  .hl-detail{font-size:.78rem;color:var(--muted);margin-top:.2rem;}
+
+  /* PERCENTILE BAR */
+  .percentile-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1.2rem;box-shadow:var(--shadow);}
+  .percentile-card h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--navy);margin-bottom:1.2rem;}
+  .pct-row{margin-bottom:.9rem;}
+  .pct-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;}
+  .pct-name{font-size:.78rem;font-weight:600;color:var(--text);}
+  .pct-val{font-size:.72rem;color:var(--muted);}
+  .pct-track{background:var(--surface2);border-radius:8px;height:10px;position:relative;border:1px solid var(--border);}
+  .pct-fill{height:100%;border-radius:8px;transition:width 1s ease;}
+  .pct-marker{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2);}
 
   /* ADMIN */
   .admin-lock{background:#fef3c7;border:1.5px solid #fde68a;border-radius:12px;padding:.9rem 1.1rem;margin-bottom:1rem;font-size:.8rem;color:#92400e;display:flex;align-items:center;gap:.6rem;}
@@ -233,28 +272,24 @@
   .sbadge{display:inline-block;padding:.11rem .42rem;border-radius:4px;font-size:.68rem;font-weight:600;background:var(--lilac);color:var(--lav-d);}
   .sy{background:#d1fae5;color:#065f46;padding:.11rem .38rem;border-radius:4px;font-size:.67rem;font-weight:600;}
   .sn{background:#fee2e2;color:#dc2626;padding:.11rem .38rem;border-radius:4px;font-size:.67rem;font-weight:600;}
-
-  /* PROG BADGE */
   .prog-pgp{background:#dbeafe;color:#1e40af;padding:.1rem .38rem;border-radius:4px;font-size:.66rem;font-weight:600;}
   .prog-ipm{background:#fce7f3;color:#9d174d;padding:.1rem .38rem;border-radius:4px;font-size:.66rem;font-weight:600;}
 
-  /* TOAST */
   .toast{position:fixed;bottom:2rem;right:2rem;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.85rem 1.2rem;font-size:.82rem;color:var(--text);box-shadow:var(--shadow-md);z-index:9999;transform:translateY(100px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);}
   .toast.show{transform:translateY(0);opacity:1;}
 
-  /* ANIMATIONS */
   @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   @keyframes scaleIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
   ::-webkit-scrollbar{width:5px;height:5px;}
   ::-webkit-scrollbar-track{background:var(--surface2);}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
-  @media(max-width:600px){.header,.content,.stats-bar{padding:1rem;}.tabs-bar{padding:0 1rem;}}
+  @media(max-width:600px){.header,.content,.stats-bar{padding:1rem;}.tabs-bar{padding:0 1rem;}.highlights-row{grid-template-columns:1fr;}.trend-chart{gap:1rem;}}
 </style>
 </head>
 <body>
 
-<!-- ══ GATE ══ -->
+<!-- GATE -->
 <div id="gate">
   <div class="gate-card">
     <div class="gate-logo">
@@ -277,14 +312,12 @@
       <div class="features-box">
         <h3>✦ What's inside</h3>
         <ul class="feat-list">
-          <li>Live data synced directly from the master Google Sheet</li>
-          <li>Full batch ranklist for all 310+ students with TGPA &amp; subject ranks</li>
-          <li>Term 1 and Term 2 breakdowns, plus combined cumulative view</li>
-          <li>Search &amp; filter by name, rank, TGPA, programme, grade, subject</li>
-          <li>Subject-wise leaderboards across all courses</li>
-          <li>Grade distribution &amp; batch analytics charts</li>
-          <li>Detailed profile cards with per-subject breakdown</li>
-          <li>Top 3 Podium &amp; Top 20 table</li>
+          <li>Live data synced from the master Google Sheet</li>
+          <li>Full batch ranklist with TGPA &amp; all subject ranks</li>
+          <li>Term 1, Term 2 &amp; Term 3 views</li>
+          <li>My Performance — visual grade &amp; rank journey across all terms</li>
+          <li>Subject-wise leaderboards</li>
+          <li>Percentile standing vs batch</li>
         </ul>
       </div>
       <div class="form-group">
@@ -296,7 +329,7 @@
         <select id="reg-sec">
           <option value="">Select section</option>
           <option>A</option><option>B</option><option>C</option>
-          <option>D</option><option>E</option><option>F</option>
+          <option>D</option><option>E</option>
         </select>
       </div>
       <div class="form-group">
@@ -320,7 +353,7 @@
   </div>
 </div>
 
-<!-- ══ LOADING ══ -->
+<!-- LOADING -->
 <div id="loading">
   <div class="load-emblem">IIM</div>
   <div class="load-title">Loading Live Data…</div>
@@ -328,7 +361,7 @@
   <div class="load-bar"><div class="load-fill"></div></div>
 </div>
 
-<!-- ══ APP ══ -->
+<!-- APP -->
 <div id="app">
   <div class="header">
     <div class="h-left">
@@ -346,24 +379,23 @@
 
   <div class="tabs-bar">
     <div class="tab active" onclick="showTab('ranklist',this)">Ranklist</div>
-    <div class="tab" onclick="showTab('podium',this)">Podium</div>
-    <div class="tab" onclick="showTab('charts',this)">Analytics</div>
+    <div class="tab" onclick="showTab('myperf',this)">My Performance</div>
     <div class="tab" onclick="showTab('subjects',this)">Subject Boards</div>
     <div class="tab" id="admin-tab" onclick="showTab('admin',this)" style="display:none;">Admin Log</div>
   </div>
 
   <div class="content">
 
-    <!-- RANKLIST -->
+    <!-- RANKLIST TAB -->
     <div id="tab-ranklist">
       <div class="term-sw">
-        <button class="term-btn active" onclick="switchTerm('combined',this)">📊 Combined</button>
+        <button class="term-btn active" onclick="switchTerm('combined',this)">Term 3</button>
         <button class="term-btn" onclick="switchTerm('term1',this)">Term 1</button>
         <button class="term-btn" onclick="switchTerm('term2',this)">Term 2</button>
       </div>
       <div class="err-banner" id="data-err">
         <strong>⚠ Could not load live data</strong>
-        <span id="data-err-msg"></span> — Follow the setup steps in Code.gs to configure the Apps Script URL.
+        <span id="data-err-msg"></span>
       </div>
       <div class="filters">
         <div class="fg"><label>Search</label><input type="text" id="f-search" placeholder="Name or roll no…" oninput="applyFilters()"></div>
@@ -374,10 +406,15 @@
             <option value="IPM">IPM</option>
           </select>
         </div>
+        <div class="fg"><label>Section</label>
+          <select id="f-sec" onchange="applyFilters()">
+            <option value="">All</option>
+            <option>A</option><option>B</option><option>C</option><option>D</option><option>E</option>
+          </select>
+        </div>
         <div class="fg"><label>Min TGPA</label><input type="number" id="f-tmin" placeholder="0.0" step="0.1" oninput="applyFilters()"></div>
         <div class="fg"><label>Max TGPA</label><input type="number" id="f-tmax" placeholder="10.0" step="0.1" oninput="applyFilters()"></div>
         <div class="fg"><label>Top N Rank</label><input type="number" id="f-rmax" placeholder="e.g. 50" oninput="applyFilters()"></div>
-        <div class="fg"><label>Subject</label><select id="f-sub" onchange="applyFilters()"><option value="">All</option></select></div>
         <div class="fg"><label>Grade</label>
           <select id="f-grade" onchange="applyFilters()">
             <option value="">Any</option>
@@ -392,7 +429,7 @@
       </div>
       <div class="t-wrap">
         <div class="t-head-bar">
-          <h3 id="tbl-title">Full Ranklist</h3>
+          <h3 id="tbl-title">Term 3 Ranklist</h3>
           <span class="t-count" id="t-count"></span>
         </div>
         <div style="overflow-x:auto;">
@@ -402,25 +439,61 @@
       </div>
     </div>
 
-    <!-- PODIUM -->
-    <div id="tab-podium" style="display:none;">
-      <div class="cc" style="margin-bottom:1.1rem;"><h3>🏆 Top Performers</h3><div class="podium" id="podium"></div></div>
-      <div class="t-wrap"><div class="t-head-bar"><h3>Top 20 Rankers</h3></div>
-        <div style="overflow-x:auto;"><table><thead id="t20-head"></thead><tbody id="t20-body"></tbody></table></div>
+    <!-- MY PERFORMANCE TAB -->
+    <div id="tab-myperf" style="display:none;">
+      <div class="perf-search-box">
+        <h2>📊 My Performance</h2>
+        <p>Enter your name to see your academic journey across all three terms</p>
+        <div class="perf-input-row">
+          <input type="text" id="perf-name-in" placeholder="Type your name…" oninput="perfSuggest()" onkeydown="if(event.key==='Enter')loadPerf()">
+          <button onclick="loadPerf()">View My Stats →</button>
+        </div>
+        <div id="perf-suggestions" style="max-width:420px;margin:.5rem auto 0;text-align:left;"></div>
+      </div>
+
+      <div id="perf-dashboard">
+        <!-- Header -->
+        <div class="perf-header">
+          <div class="perf-avatar" id="perf-avatar"></div>
+          <div class="perf-name-block">
+            <h2 id="perf-fullname"></h2>
+            <p id="perf-submeta"></p>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="perf-kpis" id="perf-kpis"></div>
+
+        <!-- TGPA Trend -->
+        <div class="trend-card">
+          <h3>📈 TGPA Journey</h3>
+          <div class="trend-chart" id="tgpa-trend"></div>
+        </div>
+
+        <!-- Rank Trend -->
+        <div class="rank-trend-card">
+          <h3>🏅 Overall Rank Trend</h3>
+          <div class="rank-bars" id="rank-trend"></div>
+        </div>
+
+        <!-- Best / Worst -->
+        <div class="highlights-row" id="perf-highlights"></div>
+
+        <!-- Percentile -->
+        <div class="percentile-card">
+          <h3>📊 Batch Percentile — Term 3</h3>
+          <div id="perf-percentile"></div>
+        </div>
+
+        <!-- Subject grades across terms -->
+        <div class="subj-perf-card">
+          <h3>📚 Subject-wise Grades Across All Terms</h3>
+          <div class="subj-perf-grid" id="subj-perf-grid"></div>
+        </div>
       </div>
     </div>
 
-    <!-- ANALYTICS -->
-    <div id="tab-charts" style="display:none;">
-      <div class="chart-grid">
-        <div class="cc"><h3>TGPA Distribution</h3><div id="ch-tgpa"></div></div>
-        <div class="cc"><h3>Grade Distribution — All Subjects</h3><div id="ch-grade"></div></div>
-        <div class="cc"><h3>Subject Avg Rank</h3><div id="ch-subrank"></div></div>
-        <div class="cc"><h3>Top Scorer per Subject</h3><div id="ch-top"></div></div>
-      </div>
-    </div>
-
-    <!-- SUBJECT BOARDS -->
+    <!-- SUBJECT BOARDS TAB -->
     <div id="tab-subjects" style="display:none;">
       <div class="stabs" id="stabs"></div>
       <div class="t-wrap"><div class="t-head-bar"><h3 id="sb-title">Subject Leaderboard</h3></div>
@@ -433,7 +506,7 @@
       </div>
     </div>
 
-    <!-- ADMIN — only visible to owner -->
+    <!-- ADMIN TAB -->
     <div id="tab-admin" style="display:none;">
       <div class="admin-lock">🔒 This log is private and visible only to the portal admin.</div>
       <div style="margin-bottom:1.8rem;">
@@ -456,23 +529,21 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ════════════════════════════════════════════════════════════
-// ★ CONFIG — paste your Apps Script Web App URL below ★
-// ════════════════════════════════════════════════════════════
-var API = "https://script.google.com/macros/s/AKfycbz_eMthTE5J84KowXXjeKnRNo0U89pwL3juy8IbrSvXV0glhbRYuKvb5GptDFvY5k-t/exec";
+// ════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════
+var API = "PASTE_YOUR_WEB_APP_URL_HERE";
+var ADMIN_EMAIL = "ipm04jatink@iimrohtak.ac.in"; // ← update to your actual email
 
-// ★ ADMIN — set your own @iimrohtak.ac.in email here ★
-// Only this email will see the Admin Log tab
-var ADMIN_EMAIL = "ipm04jatink@iimrohtak.ac.in";
-
-// ─── STATE ────────────────────────────────────────────────
+// ─── STATE ─────────────────────────────────────────────
 var liveData=null, currentTerm='combined';
 var allStudents=[], filtered=[];
 var sortKey='rank', sortDir=1;
 var activeSub='', subjects=[];
 var currentUser=null, shareChoice='';
+var t1Students=[], t2Students=[], t3Students=[];
 
-// ─── GATE ─────────────────────────────────────────────────
+// ─── GATE ──────────────────────────────────────────────
 function showStep(id){
   document.querySelectorAll('.gate-step').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -483,13 +554,13 @@ async function checkEmail(){
   var er=document.getElementById('email-err'); er.style.display='none';
   if(!e){er.textContent='Please enter your email.';er.style.display='block';return;}
   if(!e.endsWith('@iimrohtak.ac.in')){
-    er.textContent='🔒 Access restricted to @iimrohtak.ac.in only.';er.style.display='block';return;
+    er.textContent='🔒 Access restricted to @iimrohtak.ac.in only.';
+    er.style.display='block';return;
   }
   var k='u:'+e.replace(/[@.]/g,'_');
   var ex=await gs(k,true);
   if(ex){
     currentUser=JSON.parse(ex.value);
-    // Log repeat visit silently
     await ss('v:'+Date.now()+'_'+e.replace(/[@.]/g,'_'),
       JSON.stringify({email:e,name:currentUser.name,section:currentUser.section,time:new Date().toISOString()}),true);
     document.getElementById('ret-name').textContent='Welcome back, '+currentUser.name+'!';
@@ -513,31 +584,27 @@ async function completeReg(){
   if(!shareChoice){er.textContent='Please choose your score-sharing preference.';er.style.display='block';return;}
   var d={email,name,section:sec,shareScores:shareChoice,registeredAt:new Date().toISOString()};
   await ss('u:'+email.replace(/[@.]/g,'_'),JSON.stringify(d),true);
-  currentUser=d;
-  enterApp();
+  currentUser=d; enterApp();
 }
 
 async function enterApp(){
   document.getElementById('gate').classList.add('hidden');
   document.getElementById('loading').classList.add('show');
   document.getElementById('hdr-user').textContent='👤 '+(currentUser?.name||'Guest');
-
-  // Show admin tab only for admin email
   if(currentUser&&currentUser.email===ADMIN_EMAIL){
     document.getElementById('admin-tab').style.display='block';
   }
-
   await loadData();
   document.getElementById('loading').classList.remove('show');
   document.getElementById('app').classList.add('visible');
   initApp();
 }
 
-// ─── DATA ─────────────────────────────────────────────────
+// ─── DATA ───────────────────────────────────────────────
 async function loadData(){
   if(API==="PASTE_YOUR_WEB_APP_URL_HERE"){
     showErr("Apps Script URL not configured. Paste your Web App URL into the API variable.");
-    liveData=null; return;
+    return;
   }
   try{
     document.getElementById('load-st').textContent='Fetching from Google Sheet…';
@@ -547,104 +614,97 @@ async function loadData(){
       document.getElementById('upd-lbl').textContent='Live · '+new Date(j.updated).toLocaleTimeString();
       document.getElementById('data-err').style.display='none';
     } else throw new Error(j.message||'Unknown error');
-  }catch(e){showErr(e.message);liveData=null;}
+  }catch(e){showErr(e.message); liveData=null;}
 }
 
 function showErr(msg){
-  var el=document.getElementById('data-err');
-  el.style.display='block';
+  document.getElementById('data-err').style.display='block';
   document.getElementById('data-err-msg').textContent=' '+msg;
 }
 
 async function doRefresh(){toast('⟳ Refreshing…');await loadData();initApp();toast('✓ Refreshed!');}
 
-// ─── STUDENTS ─────────────────────────────────────────────
-function getStudents(term){
-  if(!liveData) return [];
-  var src=term==='term1'?liveData.term1:term==='term2'?liveData.term2:liveData.ranklist;
-  if(!src||!src.students) return [];
-  // Normalise programme: PGP15 and PGP16 both → "PGP"
-  return src.students.map(s=>({
+// ─── STUDENT HELPERS ────────────────────────────────────
+function normalise(students){
+  if(!students) return [];
+  return students.map(s=>({
     ...s,
-    programme: s.roll?.startsWith('IPM') ? 'IPM' : 'PGP'
+    programme: s.roll?.toUpperCase().startsWith('IPM') ? 'IPM' : 'PGP'
   }));
 }
-
+function getStudents(term){
+  if(!liveData) return [];
+  if(term==='term1') return normalise(liveData.term1?.students);
+  if(term==='term2') return normalise(liveData.term2?.students);
+  return normalise(liveData.ranklist?.students);
+}
 function getSubjects(students){
   var s=new Set();
   students.forEach(st=>{
     if(st.grades) Object.keys(st.grades).forEach(k=>s.add(k));
-    if(st.subjects) Object.keys(st.subjects).forEach(k=>s.add(k));
     if(st.ranks) Object.keys(st.ranks).forEach(k=>s.add(k));
   });
   return [...s].sort();
 }
-
-function grade(s,sub){return(s.grades&&s.grades[sub])||(s.subjects&&s.subjects[sub])||'';}
-function rnk(s,sub){return(s.ranks&&s.ranks[sub])||null;}
-
-function gc(g){
-  if(!g)return '';
-  return 'gc g'+g.replace('+','p').replace('-','m');
-}
-
+function grade(s,sub){return (s.grades&&s.grades[sub])||'';}
+function rnk(s,sub){return (s.ranks&&s.ranks[sub])||null;}
+function gc(g){if(!g)return '';return 'gc g'+g.replace('+','p').replace('-','m');}
 function rb(r){
   if(r===1)return '<span class="rb r1">1</span>';
   if(r===2)return '<span class="rb r2">2</span>';
   if(r===3)return '<span class="rb r3">3</span>';
   return `<span class="rb ro">${r||'—'}</span>`;
 }
-
 function progBadge(p){
-  return p==='IPM'
-    ?'<span class="prog-ipm">IPM</span>'
-    :'<span class="prog-pgp">PGP</span>';
+  return p==='IPM'?'<span class="prog-ipm">IPM</span>':'<span class="prog-pgp">PGP</span>';
 }
 
-// ─── INIT ─────────────────────────────────────────────────
+// ─── INIT ───────────────────────────────────────────────
 function initApp(){
-  allStudents=getStudents(currentTerm);
-  subjects=getSubjects(allStudents);
+  t3Students = getStudents('combined');
+  t1Students = getStudents('term1');
+  t2Students = getStudents('term2');
+  allStudents = t3Students;
+  subjects = getSubjects(allStudents);
   if(!activeSub&&subjects.length) activeSub=subjects[0];
   filtered=[...allStudents];
-  renderStats(); buildHeaders(); buildSubFilter(); applyFilters();
-  renderPodium(); renderCharts(); renderStabs(); renderSubBoard(activeSub);
+  renderStats(); buildHeaders(); applyFilters();
+  renderStabs(); renderSubBoard(activeSub);
   if(currentUser&&currentUser.email===ADMIN_EMAIL) renderAdminLog();
+  // Auto-load My Performance if name matches
+  if(currentUser&&currentUser.name) autoLoadPerf(currentUser.name);
 }
 
 function switchTerm(t,el){
   currentTerm=t;
   document.querySelectorAll('.term-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  var titles={combined:'Full Ranklist',term1:'Term 1 Ranklist',term2:'Term 2 Ranklist'};
+  var titles={combined:'Term 3 Ranklist',term1:'Term 1 Ranklist',term2:'Term 2 Ranklist'};
   document.getElementById('tbl-title').textContent=titles[t];
   allStudents=getStudents(t); subjects=getSubjects(allStudents);
-  filtered=[...allStudents]; buildHeaders(); buildSubFilter(); applyFilters();
-  renderPodium(); renderCharts(); renderStabs(); renderSubBoard(activeSub);
+  filtered=[...allStudents]; buildHeaders(); applyFilters();
+  renderStabs(); renderSubBoard(activeSub);
 }
 
-// ─── STATS ────────────────────────────────────────────────
+// ─── STATS ──────────────────────────────────────────────
 function renderStats(){
-  var all=getStudents('combined');
+  var all=t3Students;
   var wt=all.filter(s=>s.tgpa);
   var avg=wt.length?(wt.reduce((a,b)=>a+b.tgpa,0)/wt.length).toFixed(2):'—';
   var sorted=[...wt].sort((a,b)=>b.tgpa-a.tgpa);
-  var pgp=all.filter(s=>s.programme==='PGP').length;
-  var ipm=all.filter(s=>s.programme==='IPM').length;
   document.getElementById('stats-bar').innerHTML=`
-    <div class="stat-card"><div class="stat-num">${all.length}</div><div class="stat-lbl">Total Students</div></div>
+    <div class="stat-card"><div class="stat-num">${all.length}</div><div class="stat-lbl">Students</div></div>
     <div class="stat-card"><div class="stat-num">${avg}</div><div class="stat-lbl">Batch Avg TGPA</div></div>
     <div class="stat-card"><div class="stat-num">${sorted[0]?sorted[0].tgpa:'—'}</div><div class="stat-lbl">Highest TGPA</div></div>
-    <div class="stat-card"><div class="stat-num">${sorted[sorted.length-1]?sorted[sorted.length-1].tgpa:'—'}</div><div class="stat-lbl">Lowest TGPA</div></div>
-    <div class="stat-card"><div class="stat-num">${pgp}</div><div class="stat-lbl">PGP Students</div></div>
-    <div class="stat-card"><div class="stat-num">${ipm}</div><div class="stat-lbl">IPM Students</div></div>
+    <div class="stat-card"><div class="stat-num">${all.filter(s=>s.programme==='PGP').length}</div><div class="stat-lbl">PGP</div></div>
+    <div class="stat-card"><div class="stat-num">${all.filter(s=>s.programme==='IPM').length}</div><div class="stat-lbl">IPM</div></div>
     <div class="stat-card"><div class="stat-num">${subjects.length}</div><div class="stat-lbl">Subjects</div></div>`;
 }
 
-// ─── TABLE ────────────────────────────────────────────────
+// ─── TABLE ──────────────────────────────────────────────
 function buildHeaders(){
   var subs=subjects.slice(0,12);
-  var hdr=`<tr>
+  document.getElementById('main-thead').innerHTML=`<tr>
     <th onclick="srt('rank')" id="th-rank">Rank</th>
     <th onclick="srt('roll')" id="th-roll">Roll No</th>
     <th onclick="srt('name')" id="th-name">Name</th>
@@ -652,15 +712,6 @@ function buildHeaders(){
     <th onclick="srt('tgpa')" id="th-tgpa">TGPA</th>
     ${subs.map(s=>`<th>${s}</th>`).join('')}
   </tr>`;
-  document.getElementById('main-thead').innerHTML=hdr;
-  document.getElementById('t20-head').innerHTML=`<tr>
-    <th>Rank</th><th>Name</th><th>Roll No</th><th>Prog</th><th>TGPA</th>
-    ${subs.map(s=>`<th>${s}</th>`).join('')}
-  </tr>`;
-}
-
-function buildSubFilter(){
-  document.getElementById('f-sub').innerHTML='<option value="">All</option>'+subjects.map(s=>`<option>${s}</option>`).join('');
 }
 
 function renderTable(data){
@@ -672,7 +723,7 @@ function renderTable(data){
     <tr class="${isMe(s)?'hl':''}" onclick="openProfile('${s.roll}')">
       <td>${rb(s.rank)}</td>
       <td class="rc">${s.roll}</td>
-      <td class="nc">${s.name}${isMe(s)?' <span style="font-size:.6rem;color:var(--sky-d);background:#eff6ff;padding:0 4px;border-radius:3px;border:1px solid var(--sky);margin-left:4px;">You</span>':''}</td>
+      <td class="nc">${s.name}${isMe(s)?' <span style="font-size:.6rem;color:var(--sky-d);background:#eff6ff;padding:0 4px;border-radius:3px;border:1px solid var(--sky);margin-left:4px">You</span>':''}</td>
       <td>${progBadge(s.programme)}</td>
       <td class="tc">${s.tgpa||'—'}</td>
       ${subs.map(sub=>{var g=grade(s,sub);return `<td>${g?`<span class="${gc(g)}">${g}</span>`:'—'}</td>`;}).join('')}
@@ -683,29 +734,25 @@ function srt(key){
   if(sortKey===key) sortDir*=-1; else{sortKey=key;sortDir=1;}
   document.querySelectorAll('thead th').forEach(t=>t.classList.remove('sorted'));
   var el=document.getElementById('th-'+key); if(el) el.classList.add('sorted');
-  filtered.sort((a,b)=>{
-    var va=a[key]??0,vb=b[key]??0;
-    if(typeof va==='string') return va.localeCompare(vb)*sortDir;
-    return (va-vb)*sortDir;
-  });
+  filtered.sort((a,b)=>{var va=a[key]??0,vb=b[key]??0;return typeof va==='string'?va.localeCompare(vb)*sortDir:(va-vb)*sortDir;});
   renderTable(filtered);
 }
 
 function applyFilters(){
   var search=document.getElementById('f-search').value.toLowerCase();
   var prog=document.getElementById('f-prog').value;
+  var sec=document.getElementById('f-sec').value;
   var tMin=parseFloat(document.getElementById('f-tmin').value)||0;
   var tMax=parseFloat(document.getElementById('f-tmax').value)||10;
-  var sub=document.getElementById('f-sub').value;
   var gr=document.getElementById('f-grade').value;
   var rMax=parseInt(document.getElementById('f-rmax').value)||9999;
   filtered=allStudents.filter(s=>{
     if(search&&!s.name?.toLowerCase().includes(search)&&!s.roll?.toLowerCase().includes(search)) return false;
     if(prog&&s.programme!==prog) return false;
+    if(sec&&s.section!==sec) return false;
     if(s.tgpa&&(s.tgpa<tMin||s.tgpa>tMax)) return false;
     if(s.rank&&s.rank>rMax) return false;
-    if(sub&&gr&&grade(s,sub)!==gr) return false;
-    else if(gr&&!sub){if(!subjects.some(sb=>grade(s,sb)===gr)) return false;}
+    if(gr&&!subjects.some(sb=>grade(s,sb)===gr)) return false;
     return true;
   });
   renderTable(filtered);
@@ -713,89 +760,227 @@ function applyFilters(){
 
 function resetFilters(){
   ['f-search','f-tmin','f-tmax','f-rmax'].forEach(id=>document.getElementById(id).value='');
-  ['f-prog','f-sub','f-grade'].forEach(id=>document.getElementById(id).value='');
+  ['f-prog','f-sec','f-grade'].forEach(id=>document.getElementById(id).value='');
   filtered=[...allStudents]; renderTable(filtered);
 }
 
-// ─── PODIUM ───────────────────────────────────────────────
-function renderPodium(){
-  var sorted=[...allStudents].filter(s=>s.tgpa).sort((a,b)=>b.tgpa-a.tgpa);
-  if(sorted.length<3){document.getElementById('podium').innerHTML='<p style="color:var(--muted);padding:2rem">Not enough TGPA data</p>';return;}
-  var[s1,s2,s3]=sorted;
-  document.getElementById('podium').innerHTML=`
-    <div class="pb p2"><div class="pn">${s2.name}</div><div class="pt">${s2.tgpa}</div><div class="ps">2</div></div>
-    <div class="pb p1"><div class="pn" style="font-weight:700;font-size:.9rem">${s1.name}</div><div class="pt" style="font-size:1.2rem;color:var(--navy)">${s1.tgpa}</div><div class="ps">1</div></div>
-    <div class="pb p3"><div class="pn">${s3.name}</div><div class="pt">${s3.tgpa}</div><div class="ps">3</div></div>`;
-  var top20=sorted.slice(0,20); var subs=subjects.slice(0,9);
-  document.getElementById('t20-head').innerHTML=`<tr><th>Rank</th><th>Name</th><th>Roll No</th><th>Prog</th><th>TGPA</th>${subs.map(s=>`<th>${s}</th>`).join('')}</tr>`;
-  document.getElementById('t20-body').innerHTML=top20.map((s,i)=>`
-    <tr onclick="openProfile('${s.roll}')">
-      <td>${rb(i+1)}</td><td class="nc">${s.name}</td><td class="rc">${s.roll}</td>
-      <td>${progBadge(s.programme)}</td><td class="tc">${s.tgpa}</td>
-      ${subs.map(sub=>{var g=grade(s,sub);return `<td>${g?`<span class="${gc(g)}">${g}</span>`:'—'}</td>`;}).join('')}
-    </tr>`).join('');
-}
-
-// ─── CHARTS ───────────────────────────────────────────────
-function bar(lbl,val,maxVal,color){
-  return `<div class="br">
-    <div class="bl">${lbl}</div>
-    <div class="bt"><div class="bf" style="width:${maxVal?val/maxVal*100:0}%;${color?'background:'+color:''}"></div></div>
-    <div class="bv">${val}</div>
+// ═══════════════════════════════════════════════════════════
+// MY PERFORMANCE
+// ═══════════════════════════════════════════════════════════
+function perfSuggest(){
+  var q=document.getElementById('perf-name-in').value.trim().toLowerCase();
+  var box=document.getElementById('perf-suggestions');
+  if(q.length<2){box.innerHTML='';return;}
+  var matches=t3Students.filter(s=>s.name&&s.name.toLowerCase().includes(q)).slice(0,6);
+  if(!matches.length){box.innerHTML='';return;}
+  box.innerHTML=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);">
+    ${matches.map(s=>`<div onclick="selectPerf('${s.name}')" style="padding:.6rem 1rem;cursor:pointer;font-size:.85rem;color:var(--navy);border-bottom:1px solid var(--border2);"
+      onmouseover="this.style.background='#f0f9ff'" onmouseout="this.style.background=''">${s.name} <span style="font-size:.7rem;color:var(--muted);margin-left:.3rem">${s.roll}</span></div>`).join('')}
   </div>`;
 }
 
-function renderCharts(){
-  var all=allStudents.filter(s=>s.tgpa);
-  // TGPA bands
-  var bands=[{l:'9.0+',mn:9,mx:11},{l:'8.5–9',mn:8.5,mx:9},{l:'8–8.5',mn:8,mx:8.5},{l:'7.5–8',mn:7.5,mx:8},{l:'7–7.5',mn:7,mx:7.5},{l:'<7',mn:0,mx:7}];
-  var maxB=Math.max(...bands.map(b=>all.filter(s=>s.tgpa>=b.mn&&s.tgpa<b.mx).length),1);
-  // pastel bar colours per band
-  var bandCols=['#a7f3d0','#93c5fd','#c4b5fd','#fde68a','#fed7aa','#fca5a5'];
-  document.getElementById('ch-tgpa').innerHTML=bands.map((b,i)=>{
-    var c=all.filter(s=>s.tgpa>=b.mn&&s.tgpa<b.mx).length;
-    return bar(b.l,c,maxB,bandCols[i]);
+function selectPerf(name){
+  document.getElementById('perf-name-in').value=name;
+  document.getElementById('perf-suggestions').innerHTML='';
+  loadPerf();
+}
+
+function autoLoadPerf(name){
+  document.getElementById('perf-name-in').value=name;
+}
+
+function loadPerf(){
+  var q=document.getElementById('perf-name-in').value.trim().toLowerCase();
+  document.getElementById('perf-suggestions').innerHTML='';
+  if(!q){toast('Please enter your name');return;}
+
+  var s3=t3Students.find(s=>s.name&&s.name.toLowerCase()===q);
+  var s1=t1Students.find(s=>s.name&&s.name.toLowerCase()===q);
+  var s2=t2Students.find(s=>s.name&&s.name.toLowerCase()===q);
+
+  if(!s3&&!s1&&!s2){
+    // Try partial match
+    s3=t3Students.find(s=>s.name&&s.name.toLowerCase().includes(q));
+    s1=t1Students.find(s=>s.name&&s.name.toLowerCase().includes(q));
+    s2=t2Students.find(s=>s.name&&s.name.toLowerCase().includes(q));
+  }
+  if(!s3&&!s1&&!s2){toast('Student not found. Try a different spelling.');return;}
+
+  var student = s3||s2||s1;
+  renderPerfDashboard(student, s1, s2, s3);
+  document.getElementById('perf-dashboard').classList.add('show');
+  document.getElementById('perf-dashboard').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function gradePoints(g){
+  var map={'A+':10,'A':9,'A-':8,'B+':7,'B':6,'B-':5,'C+':4,'C':3,'C-':2,'D':1,'F':0};
+  return map[g]||0;
+}
+
+function gradeColor(g){
+  if(!g) return '#e5e7eb';
+  if(g==='A+') return '#fbbf24';
+  if(g==='A')  return '#34d399';
+  if(g==='A-') return '#60a5fa';
+  if(g==='B+') return '#a78bfa';
+  if(g==='B')  return '#94a3b8';
+  if(g==='B-') return '#fb923c';
+  if(g.startsWith('C')) return '#f87171';
+  return '#d1d5db';
+}
+
+function renderPerfDashboard(student, s1, s2, s3){
+  var name=student.name;
+  var initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+
+  // Avatar
+  document.getElementById('perf-avatar').textContent=initials;
+  document.getElementById('perf-fullname').textContent=name;
+  document.getElementById('perf-submeta').textContent=
+    (student.roll||'') + ' · ' + (student.programme||'') + ' · Section ' + (student.section||'—');
+
+  // ── KPIs (Term 3 focused) ──
+  var t3 = s3||{};
+  var apCount = (t3.grades?Object.values(t3.grades).filter(g=>g==='A+').length:0);
+  var allSubjects = getSubjects([...t3Students,...t1Students,...t2Students]);
+  document.getElementById('perf-kpis').innerHTML=`
+    <div class="perf-kpi"><div class="perf-kpi-val">#${t3.rank||'—'}</div><div class="perf-kpi-lbl">Term 3 Rank</div></div>
+    <div class="perf-kpi"><div class="perf-kpi-val">${t3.tgpa||'—'}</div><div class="perf-kpi-lbl">Term 3 TGPA</div></div>
+    <div class="perf-kpi"><div class="perf-kpi-val">${apCount}</div><div class="perf-kpi-lbl">A+ in Term 3</div></div>
+    <div class="perf-kpi"><div class="perf-kpi-val">${allSubjects.length}</div><div class="perf-kpi-lbl">Total Subjects</div></div>`;
+
+  // ── TGPA Trend ──
+  var terms=[
+    {label:'Term 1', sub:'Term 1', tgpa:s1?s1.tgpa:null, color:'#93c5fd'},
+    {label:'Term 2', sub:'Term 2', tgpa:s2?s2.tgpa:null, color:'#c4b5fd'},
+    {label:'Term 3', sub:'Current', tgpa:s3?s3.tgpa:null, color:'#6ee7b7'},
+  ];
+  var maxTgpa=Math.max(...terms.map(t=>t.tgpa||0),10);
+  document.getElementById('tgpa-trend').innerHTML=terms.map(t=>`
+    <div class="trend-bar-wrap">
+      <div class="trend-bar-outer">
+        ${t.tgpa ? `<div class="trend-bar" style="height:${(t.tgpa/maxTgpa*100).toFixed(1)}%;background:linear-gradient(180deg,${t.color},${t.color}99);">
+          <span class="trend-val">${t.tgpa}</span>
+        </div>` : `<div style="text-align:center;font-size:.7rem;color:var(--muted);padding-top:8px">N/A</div>`}
+      </div>
+      <div class="trend-label">${t.label}</div>
+      <div class="trend-sublabel">${t.sub}</div>
+    </div>`).join('');
+
+  // ── Rank Trend ──
+  var rankTerms=[
+    {label:'Term 1',rank:s1?s1.rank:null,color:'#93c5fd'},
+    {label:'Term 2',rank:s2?s2.rank:null,color:'#c4b5fd'},
+    {label:'Term 3',rank:s3?s3.rank:null,color:'#6ee7b7'},
+  ];
+  var batchSize=Math.max(t3Students.length,t2Students.length,t1Students.length,1);
+  // Lower rank = better, so invert bar height
+  document.getElementById('rank-trend').innerHTML=rankTerms.map((t,i)=>{
+    if(!t.rank) return `<div class="rank-bar-group"><div class="rank-bar-outer"></div><div class="rank-bar-label">${t.label}</div><div class="rank-bar-sub" style="color:var(--muted)">No data</div></div>`;
+    var ht = ((batchSize-t.rank+1)/batchSize*90).toFixed(1);
+    var prev=rankTerms[i-1]?rankTerms[i-1].rank:null;
+    var arrow='';
+    if(prev&&t.rank<prev) arrow=`<div class="rank-arrow arr-up">↑ improved by ${prev-t.rank}</div>`;
+    else if(prev&&t.rank>prev) arrow=`<div class="rank-arrow arr-down">↓ dropped by ${t.rank-prev}</div>`;
+    else if(prev) arrow=`<div class="rank-arrow arr-same">→ same</div>`;
+    return `<div class="rank-bar-group">
+      <div class="rank-bar-outer">
+        <div class="rank-bar-inner" style="height:${ht}%;background:linear-gradient(180deg,${t.color},${t.color}88);">
+          <span class="rank-val">#${t.rank}</span>
+        </div>
+      </div>
+      <div class="rank-bar-label">${t.label}</div>
+      ${arrow}
+    </div>`;
   }).join('');
 
-  // Grade distribution
-  var grades=['A+','A','A-','B+','B','B-','C+','C','C-'];
-  var gCols={'A+':'#fde68a','A':'#a7f3d0','A-':'#93c5fd','B+':'#c4b5fd','B':'#cbd5e1','B-':'#fed7aa','C+':'#fcd34d','C':'#fca5a5','C-':'#f9a8d4'};
-  var maxG=Math.max(...grades.map(g=>allStudents.reduce((a,s)=>a+subjects.filter(sub=>grade(s,sub)===g).length,0)),1);
-  document.getElementById('ch-grade').innerHTML=grades.map(g=>{
-    var c=allStudents.reduce((a,s)=>a+subjects.filter(sub=>grade(s,sub)===g).length,0);
-    return `<div class="br"><div class="bl"><span class="${gc(g)}">${g}</span></div><div class="bt"><div class="bf" style="width:${c/maxG*100}%;background:${gCols[g]}"></div></div><div class="bv">${c}</div></div>`;
-  }).join('');
-
-  // Subject avg rank
-  var sr=subjects.map(sub=>{
-    var vals=allStudents.map(s=>rnk(s,sub)).filter(Boolean);
-    return{sub,avg:vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0};
-  }).filter(x=>x.avg>0).sort((a,b)=>a.avg-b.avg);
-  var maxR=Math.max(...sr.map(x=>x.avg),1);
-  var subCols=['#a7f3d0','#93c5fd','#c4b5fd','#fde68a','#fed7aa','#fca5a5','#f9a8d4','#ddd6fe','#bae6fd','#bbf7d0','#fef08a','#fecdd3'];
-  document.getElementById('ch-subrank').innerHTML=sr.map((x,i)=>bar(x.sub,x.avg,maxR,subCols[i%subCols.length])).join('');
-
-  // Top scorer per subject
-  document.getElementById('ch-top').innerHTML=`<div style="display:flex;flex-direction:column;gap:.3rem;">
-    ${subjects.slice(0,12).map(sub=>{
-      var sorted=[...allStudents].filter(st=>rnk(st,sub)).sort((a,b)=>rnk(a,sub)-rnk(b,sub));
-      if(!sorted.length)return '';
-      var top=sorted[0]; var g=grade(top,sub);
-      return `<div style="display:flex;align-items:center;gap:.5rem;padding:.32rem 0;border-bottom:1px solid var(--border2)">
-        <span style="font-size:.68rem;color:var(--muted);width:46px">${sub}</span>
-        <span style="font-size:.79rem;font-weight:600;color:var(--navy);flex:1">${top.name}</span>
-        ${g?`<span class="${gc(g)}">${g}</span>`:''}
-        <span style="font-size:.68rem;color:var(--light);font-family:'DM Mono',monospace">#${rnk(top,sub)}</span>
+  // ── Best / Worst subject in Term 3 ──
+  if(s3&&s3.ranks&&Object.keys(s3.ranks).length){
+    var subs3=Object.keys(s3.ranks);
+    var best3=subs3.reduce((b,s)=>s3.ranks[s]<s3.ranks[b]?s:b,subs3[0]);
+    var worst3=subs3.reduce((w,s)=>s3.ranks[s]>s3.ranks[w]?s:w,subs3[0]);
+    document.getElementById('perf-highlights').innerHTML=`
+      <div class="highlight-card best">
+        <h4>🌟 Strongest Subject</h4>
+        <div class="hl-subject">${best3}</div>
+        <div class="hl-detail">Rank #${s3.ranks[best3]} in batch · <span class="${gc(grade(s3,best3))}">${grade(s3,best3)||'—'}</span></div>
+      </div>
+      <div class="highlight-card worst">
+        <h4>📌 Focus Area</h4>
+        <div class="hl-subject">${worst3}</div>
+        <div class="hl-detail">Rank #${s3.ranks[worst3]} in batch · <span class="${gc(grade(s3,worst3))}">${grade(s3,worst3)||'—'}</span></div>
       </div>`;
-    }).join('')}
-  </div>`;
+  } else {
+    document.getElementById('perf-highlights').innerHTML='';
+  }
+
+  // ── Percentile ──
+  if(s3&&s3.tgpa){
+    var below=t3Students.filter(s=>s.tgpa&&s.tgpa<s3.tgpa).length;
+    var pct=Math.round((below/t3Students.filter(s=>s.tgpa).length)*100);
+    var rankPct=s3.rank?Math.round(((t3Students.length-s3.rank)/t3Students.length)*100):null;
+    document.getElementById('perf-percentile').innerHTML=`
+      <div class="pct-row">
+        <div class="pct-label"><span class="pct-name">TGPA Percentile</span><span class="pct-val">Better than ${pct}% of batch</span></div>
+        <div class="pct-track">
+          <div class="pct-fill" style="width:${pct}%;background:linear-gradient(90deg,#93c5fd,#6ee7b7)"></div>
+          <div class="pct-marker" style="left:${pct}%;background:#3b82f6"></div>
+        </div>
+      </div>
+      ${rankPct!==null?`<div class="pct-row" style="margin-top:.8rem">
+        <div class="pct-label"><span class="pct-name">Rank Percentile</span><span class="pct-val">Top ${100-rankPct}% of batch</span></div>
+        <div class="pct-track">
+          <div class="pct-fill" style="width:${rankPct}%;background:linear-gradient(90deg,#c4b5fd,#f9a8d4)"></div>
+          <div class="pct-marker" style="left:${rankPct}%;background:#7c3aed"></div>
+        </div>
+      </div>`:''}`;
+  } else {
+    document.getElementById('perf-percentile').innerHTML='<p style="color:var(--muted);font-size:.85rem">TGPA data not available for Term 3.</p>';
+  }
+
+  // ── Subject grades across all terms ──
+  var allSubs=getSubjects([s1||{},s2||{},s3||{}].filter(Boolean));
+  var subColors=['#fde68a','#a7f3d0','#93c5fd','#c4b5fd','#fed7aa','#fca5a5','#f9a8d4','#ddd6fe','#bae6fd'];
+  document.getElementById('subj-perf-grid').innerHTML=allSubs.map((sub,idx)=>{
+    var g1=s1?grade(s1,sub):''; var r1=s1?rnk(s1,sub):null;
+    var g2=s2?grade(s2,sub):''; var r2=s2?rnk(s2,sub):null;
+    var g3=s3?grade(s3,sub):''; var r3=s3?rnk(s3,sub):null;
+    var col=subColors[idx%subColors.length];
+    var hasAny=g1||g2||g3;
+    if(!hasAny) return '';
+    return `<div class="spg-card" style="border-left:4px solid ${col};">
+      <div class="spg-name">${sub}</div>
+      <div class="spg-terms">
+        ${g1||r1?`<div class="spg-term-row">
+          <span class="spg-term-lbl">Term 1</span>
+          <div class="spg-grade-wrap">
+            ${g1?`<span class="${gc(g1)}">${g1}</span>`:''}
+            ${r1?`<span class="spg-rank">#${r1}</span>`:''}
+          </div>
+        </div>`:''}
+        ${g2||r2?`<div class="spg-term-row">
+          <span class="spg-term-lbl">Term 2</span>
+          <div class="spg-grade-wrap">
+            ${g2?`<span class="${gc(g2)}">${g2}</span>`:''}
+            ${r2?`<span class="spg-rank">#${r2}</span>`:''}
+          </div>
+        </div>`:''}
+        ${g3||r3?`<div class="spg-term-row">
+          <span class="spg-term-lbl">Term 3</span>
+          <div class="spg-grade-wrap">
+            ${g3?`<span class="${gc(g3)}">${g3}</span>`:''}
+            ${r3?`<span class="spg-rank">#${r3}</span>`:''}
+          </div>
+        </div>`:''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
-// ─── SUBJECT BOARDS ───────────────────────────────────────
+// ─── SUBJECT BOARDS ─────────────────────────────────────
 function renderStabs(){
   document.getElementById('stabs').innerHTML=subjects.map(s=>
-    `<button class="stab ${s===activeSub?'active':''}" onclick="swSub('${s}',this)">${s}</button>`
-  ).join('');
+    `<button class="stab ${s===activeSub?'active':''}" onclick="swSub('${s}',this)">${s}</button>`).join('');
 }
 function swSub(sub,el){
   activeSub=sub;
@@ -810,98 +995,83 @@ function renderSubBoard(sub){
   document.getElementById('sb-body').innerHTML=sorted.map((s,i)=>{
     var g=grade(s,sub); var r=rnk(s,sub);
     return `<tr onclick="openProfile('${s.roll}')">
-      <td>${rb(i+1)}</td>
-      <td class="nc">${s.name}</td>
-      <td class="rc">${s.roll}</td>
+      <td>${rb(i+1)}</td><td class="nc">${s.name}</td><td class="rc">${s.roll}</td>
       <td>${g?`<span class="${gc(g)}">${g}</span>`:'—'}</td>
-      <td>${rb(s.rank)}</td>
-      <td class="tc">${s.tgpa||'—'}</td>
+      <td>${rb(s.rank)}</td><td class="tc">${s.tgpa||'—'}</td>
     </tr>`;
   }).join('');
 }
 
-// ─── PROFILE MODAL ────────────────────────────────────────
+// ─── PROFILE MODAL ──────────────────────────────────────
 function openProfile(roll){
   var s=allStudents.find(r=>r.roll===roll); if(!s) return;
   var ap=subjects.filter(sub=>grade(s,sub)==='A+').length;
   var best=subjects.reduce((b,sub)=>(rnk(s,sub)||9999)<(rnk(s,b)||9999)?sub:b,subjects[0]||'');
   document.getElementById('m-body').innerHTML=`
     <div class="m-name">${s.name}</div>
-    <div class="m-meta">${s.roll} · ${s.programme} Programme</div>
+    <div class="m-meta">${s.roll} · ${s.programme}</div>
     <div class="m-kpis">
-      <div class="kpi"><div class="kpi-v">#${s.rank||'—'}</div><div class="kpi-l">Overall Rank</div></div>
+      <div class="kpi"><div class="kpi-v">#${s.rank||'—'}</div><div class="kpi-l">Rank</div></div>
       <div class="kpi"><div class="kpi-v">${s.tgpa||'—'}</div><div class="kpi-l">TGPA</div></div>
       <div class="kpi"><div class="kpi-v">${ap}</div><div class="kpi-l">A+ Grades</div></div>
       <div class="kpi"><div class="kpi-v">${best||'—'}</div><div class="kpi-l">Best Subject</div></div>
     </div>
-    <div style="font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.7rem">Subject-wise Performance</div>
+    <div style="font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.7rem">Subject Performance</div>
     <div class="subj-grid">
-      ${subjects.map(sub=>{
-        var g=grade(s,sub); var r=rnk(s,sub);
-        return `<div class="subj-card">
+      ${subjects.map(sub=>{var g=grade(s,sub);var r=rnk(s,sub);return `
+        <div class="subj-card">
           <div class="subj-nm">${sub}</div>
           <div class="subj-st">
             <span style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--navy)">${r?'#'+r:'—'}</span>
             ${g?`<span class="${gc(g)}">${g}</span>`:''}
           </div>
-        </div>`;
-      }).join('')}
+        </div>`;}).join('')}
     </div>`;
   document.getElementById('m-overlay').classList.add('open');
 }
 function closeM(e){if(e.target===document.getElementById('m-overlay'))closeMd();}
 function closeMd(){document.getElementById('m-overlay').classList.remove('open');}
 
-// ─── TABS ─────────────────────────────────────────────────
+// ─── TABS ───────────────────────────────────────────────
 function showTab(n,el){
-  ['ranklist','podium','charts','subjects','admin'].forEach(t=>
+  ['ranklist','myperf','subjects','admin'].forEach(t=>
     document.getElementById('tab-'+t).style.display=t===n?'block':'none');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
 }
 
-// ─── ADMIN LOG (private) ──────────────────────────────────
+// ─── ADMIN LOG ──────────────────────────────────────────
 async function renderAdminLog(){
-  // Registrations
   var rk=await ls('u:',true);
   var rc=document.getElementById('reg-log');
   if(rk&&rk.keys&&rk.keys.length){
     var ents=await Promise.all(rk.keys.map(k=>gs(k,true)));
-    rc.innerHTML=ents.filter(Boolean).map(e=>{
-      var d=JSON.parse(e.value);
-      return `<div class="log-e">
+    rc.innerHTML=ents.filter(Boolean).map(e=>{var d=JSON.parse(e.value);return `
+      <div class="log-e">
         <div><div class="log-n">${d.name} <span class="sbadge">Sec ${d.section}</span></div><div class="log-m">${d.email}</div></div>
-        <div style="text-align:right">
-          <span class="${d.shareScores==='yes'?'sy':'sn'}">${d.shareScores==='yes'?'✓ Sharing':'✗ Private'}</span>
-          <div class="log-t">${new Date(d.registeredAt).toLocaleString()}</div>
-        </div>
-      </div>`;
-    }).join('');
+        <div style="text-align:right"><span class="${d.shareScores==='yes'?'sy':'sn'}">${d.shareScores==='yes'?'✓ Sharing':'✗ Private'}</span>
+        <div class="log-t">${new Date(d.registeredAt).toLocaleString()}</div></div>
+      </div>`;}).join('');
   } else rc.innerHTML='<p style="color:var(--muted);font-size:.82rem">No registrations yet.</p>';
 
-  // Visit log
   var vk=await ls('v:',true);
   var vc=document.getElementById('vis-log');
   if(vk&&vk.keys&&vk.keys.length){
     var vis=await Promise.all(vk.keys.map(k=>gs(k,true)));
-    vc.innerHTML=vis.filter(Boolean)
-      .sort((a,b)=>b.key.localeCompare(a.key))
-      .map(e=>{
-        var d=JSON.parse(e.value);
-        return `<div class="log-e">
-          <div><div class="log-n">${d.name} <span class="sbadge">Sec ${d.section}</span></div><div class="log-m">${d.email}</div></div>
-          <div class="log-t">${new Date(d.time).toLocaleString()}</div>
-        </div>`;
-      }).join('');
+    vc.innerHTML=vis.filter(Boolean).sort((a,b)=>b.key.localeCompare(a.key)).map(e=>{var d=JSON.parse(e.value);return `
+      <div class="log-e">
+        <div><div class="log-n">${d.name} <span class="sbadge">Sec ${d.section}</span></div><div class="log-m">${d.email}</div></div>
+        <div class="log-t">${new Date(d.time).toLocaleString()}</div>
+      </div>`;}).join('');
   } else vc.innerHTML='<p style="color:var(--muted);font-size:.82rem">No repeat visits yet.</p>';
 }
 
-// ─── STORAGE ──────────────────────────────────────────────
+// ─── STORAGE ────────────────────────────────────────────
 async function gs(k,sh=false){try{return await window.storage.get(k,sh);}catch(e){return null;}}
 async function ss(k,v,sh=false){try{return await window.storage.set(k,v,sh);}catch(e){return null;}}
 async function ls(p,sh=false){try{return await window.storage.list(p,sh);}catch(e){return null;}}
 
-// ─── UTILS ────────────────────────────────────────────────
+// ─── UTILS ──────────────────────────────────────────────
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMd();});
 document.getElementById('email-in').addEventListener('keydown',e=>{if(e.key==='Enter')checkEmail();});
