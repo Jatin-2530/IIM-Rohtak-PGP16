@@ -1386,4 +1386,9 @@ async function ls(p,sh){try{return await window.storage.list(p,sh);}catch(e){ret
 // ════════════════════════════════════════════════════════════════
 // UTILS
 // ════════════════════════════════════════════════════════════════
-function toast(msg){var t=document.getElementById("toast");t.textContent
+function toast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show");},2800);}
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeM();});
+window.onload=function(){ startLogin(); };
+</script>
+</body>
+</html>
