@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PGP16 — Mid-Term Correction Analysis</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f4f5f7;--surface:#fff;--surface2:#f8f9fa;--border:#e2e5ea;
+  --navy:#0f172a;--text:#1e293b;--muted:#64748b;--light:#94a3b8;
+  --blue:#2563eb;--blue-bg:#eff6ff;
+  --s1:0 1px 3px rgba(0,0,0,.06);--r:8px;--r2:12px;
+}
+[data-theme="dark"]{
+  --bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;
+  --navy:#f0f6fc;--text:#c9d1d9;--muted:#8b949e;--light:#6e7681;
+  --blue:#58a6ff;--blue-bg:#0d1f3c;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:14px;scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.hdr{background:var(--navy);padding:1.4rem 2rem;border-bottom:3px solid var(--blue);}
+.hdr-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem;}
+.hdr-title h1{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:#f8fafc;}
+.hdr-title p{font-size:.63rem;color:#94a3b8;margin-top:.2rem;text-transform:uppercase;letter-spacing:.04em;}
+.hdr-r{display:flex;gap:.5rem;}
+.ibtn{height:30px;padding:0 .75rem;border-radius:var(--r);border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:#94a3b8;font-size:.7rem;font-weight:500;cursor:pointer;transition:all .15s;}
+.ibtn:hover{background:rgba(255,255,255,.14);color:#f8fafc;}
+.tabs{background:var(--surface);border-bottom:1px solid var(--border);}
+.tabs-inner{max-width:1400px;margin:0 auto;display:flex;padding:0 2rem;overflow-x:auto;}
+.tab{padding:.75rem 1.2rem;cursor:pointer;font-size:.72rem;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;letter-spacing:.03em;text-transform:uppercase;}
+.tab:hover{color:var(--text);}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue);}
+.tab-section{display:none;}
+.tab-section.on{display:block;}
+.wrap{max-width:1400px;margin:0 auto;padding:1.4rem 2rem;}
+.statusbar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.6rem 1rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:.6rem;font-size:.72rem;color:var(--muted);box-shadow:var(--s1);}
+.sdot{width:7px;height:7px;border-radius:50%;background:#f59e0b;flex-shrink:0;transition:background .3s;}
+.sdot.live{background:#10b981;}
+.sdot.err{background:#ef4444;}
+.sec-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--navy);margin:1.6rem 0 .25rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);}
+.sec-sub{font-size:.73rem;color:var(--muted);margin-bottom:1rem;line-height:1.55;}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.6rem;margin-bottom:1.2rem;}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:.85rem 1rem;border-left:3px solid var(--blue);box-shadow:var(--s1);}
+.scard-v{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:var(--navy);line-height:1.1;}
+.scard-l{font-size:.59rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:.2rem;}
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:1rem;margin-bottom:1.2rem;}
+.cg-wide{display:grid;grid-template-columns:repeat(auto-fill,minmax(520px,1fr));gap:1rem;margin-bottom:1.2rem;}
+@media(max-width:900px){.cg,.cg-wide{grid-template-columns:1fr;}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:1.2rem;box-shadow:var(--s1);}
+.card.full{grid-column:1/-1;}
+.card-title{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:600;color:var(--navy);margin-bottom:.2rem;}
+.card-desc{font-size:.67rem;color:var(--muted);margin-bottom:.9rem;line-height:1.5;}
+.ch-sm{height:200px;position:relative;}
+.ch-md{height:255px;position:relative;}
+.ch-lg{height:320px;position:relative;}
+.ch-xl{height:390px;position:relative;}
+.stabs{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.9rem;}
+.stab{padding:.24rem .65rem;border-radius:5px;font-size:.69rem;font-weight:500;cursor:pointer;border:1.5px solid var(--border);color:var(--muted);background:var(--surface);transition:all .15s;font-family:'JetBrains Mono',monospace;}
+.stab:hover{border-color:var(--blue);color:var(--blue);}
+.stab.on{background:var(--blue);color:#fff;border-color:var(--blue);}
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.7rem;margin-bottom:1.2rem;}
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem;border-top:3px solid var(--blue);box-shadow:var(--s1);}
+.pcard-name{font-weight:600;font-size:.83rem;color:var(--navy);margin-bottom:.05rem;}
+.pcard-role{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.65rem;font-family:'JetBrains Mono',monospace;}
+.prow{display:flex;justify-content:space-between;align-items:baseline;padding:.26rem 0;border-bottom:1px solid var(--border);font-size:.76rem;}
+.prow:last-of-type{border-bottom:none;}
+.prow-l{color:var(--muted);}
+.prow-v{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:500;color:var(--navy);}
+.prof-chips{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:1.1rem;}
+.prof-chip{padding:.2rem .6rem;border-radius:4px;font-size:.65rem;font-weight:600;color:#fff;font-family:'JetBrains Mono',monospace;}
+.tscroll{overflow-x:auto;margin-bottom:1.2rem;border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--s1);}
+.data-table{width:100%;border-collapse:collapse;font-size:.74rem;}
+.data-table th{padding:.55rem .85rem;background:var(--navy);color:#f0f6fc;font-size:.6rem;letter-spacing:.07em;text-transform:uppercase;font-weight:600;text-align:left;white-space:nowrap;}
+.data-table td{padding:.5rem .85rem;border-bottom:1px solid var(--border);vertical-align:middle;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--blue-bg);}
+[data-theme="dark"] .data-table tr:hover td{background:rgba(88,166,255,.06);}
+.mono{font-family:'JetBrains Mono',monospace;font-size:.71rem;}
+.prof-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.4rem;vertical-align:middle;}
+.loading-state{padding:4rem;text-align:center;color:var(--muted);font-size:.8rem;}
+.err-state{padding:2rem;text-align:center;color:#dc2626;background:var(--surface);font-size:.78rem;line-height:1.8;border-radius:var(--r);border:1px solid #fca5a5;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;margin-right:.5rem;vertical-align:middle;}
+@media(max-width:640px){.wrap,.hdr{padding:1rem;}.tabs-inner{padding:0 1rem;}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-title">
+      <h1>PGP16 — Mid-Term Correction Summary</h1>
+      <p>Term 3 &nbsp;&middot;&nbsp; All subjects &nbsp;&middot;&nbsp; Marks out of 30</p>
+    </div>
+    <div class="hdr-r">
+      <button class="ibtn" onclick="toggleTheme()" id="tbtn">Dark mode</button>
+      <button class="ibtn" onclick="reloadData()">Refresh</button>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="tabs-inner">
+    <div class="tab on"  onclick="showTab('overview',this)">Overview</div>
+    <div class="tab"     onclick="showTab('distributions',this)">Distributions</div>
+    <div class="tab"     onclick="showTab('boxplots',this)">Box Plots</div>
+    <div class="tab"     onclick="showTab('scatter',this)">Scatter Plots</div>
+    <div class="tab"     onclick="showTab('subject',this)">By Subject</div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="statusbar">
+    <div class="sdot" id="sdot"></div>
+    <span id="status-text">Connecting to Google Sheets…</span>
+  </div>
+
+  <div class="tab-section on" id="tab-overview">
+    <div id="ov-loading" class="loading-state"><span class="spinner"></span>Loading data…</div>
+    <div id="ov-body" style="display:none"></div>
+  </div>
+
+  <div class="tab-section" id="tab-distributions">
+    <div class="sec-title">Score Distributions</div>
+    <div class="sec-sub">Frequency histogram per professor. The orange curve is a fitted normal distribution. Select a subject below.</div>
+    <div class="stabs" id="dist-stabs"></div>
+    <div id="dist-body"></div>
+  </div>
+
+  <div class="tab-section" id="tab-boxplots">
+    <div class="sec-title">Box Plots</div>
+    <div class="sec-sub">Each box spans Q1 to Q3. The centre line is the median. Whiskers extend to the minimum and maximum non-outlier values. Hover a bar for exact values.</div>
+    <div id="box-body"></div>
+  </div>
+
+  <div class="tab-section" id="tab-scatter">
+    <div class="sec-title">Scatter Plots</div>
+    <div class="sec-sub">Each point represents one student's mark, colour-coded by professor. The solid horizontal line is the mean; dashed is the median. Select a subject below.</div>
+    <div class="stabs" id="scatter-stabs"></div>
+    <div id="scatter-body"></div>
+  </div>
+
+  <div class="tab-section" id="tab-subject">
+    <div class="sec-title">Subject-Level Statistics</div>
+    <div class="sec-sub">All charts and numerical statistics for a single subject. Select a subject below.</div>
+    <div class="stabs" id="subj-stabs"></div>
+    <div id="subj-body"></div>
+  </div>
+</div>
+
+<script>
+/* ── CONFIG ── */
+var SHEET_ID = '14PEbH4EvDJUnP1npfLPjFfXnOy1GtXwJjZQw_s6n8bM';
+var SUBJECTS  = ['BRM','BE','SM','OM-2','HRM','LAB','SBIE','FM'];
+var COL_BASE  = [0,4,8,12,16,20,24,28];
+var MAX_MARK  = 30;
+
+var PCOL = {
+  'Dr. Ankit Kesharwani' : '#2563eb',
+  'Dr. Sanket Dash'      : '#dc2626',
+  'Dr. Deepali Dhingra'  : '#7c3aed',
+  'Dr. Saransh Tiwari'   : '#059669',
+  'Dr. Shatrughan Yadav' : '#d97706',
+  'Dr. Rama Shankar Yadav':'#0891b2',
+  'Mr. Ashish Malhotra'  : '#be185d',
+  'Dr. Ujjawal Sawarn'   : '#4d7c0f',
+  'Dr. Vaneet Bhatia'    : '#c2410c',
+  'Dr. Anurag Tiwari'    : '#4338ca'
+};
+function pc(p){ return PCOL[p] || '#475569'; }
+function sh(p){ return p.replace(/^(Dr\.|Mr\.)\s*/,'').split(' ').slice(-1)[0]; }
+
+/* ── THEME ── */
+(function(){
+  var t = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  if(t === 'dark') document.getElementById('tbtn').textContent = 'Light mode';
+})();
+function toggleTheme(){
+  var dk = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', dk ? 'light' : 'dark');
+  document.getElementById('tbtn').textContent = dk ? 'Dark mode' : 'Light mode';
+  localStorage.setItem('theme', dk ? 'light' : 'dark');
+  if(window._ready){ destroyAll(); _built = {}; buildOverview(); }
+}
+
+/* ── GOOGLE VISUALIZATION API via JSONP — no CORS ── */
+var _timer = null;
+function loadSheetData(){
+  setStatus('Loading…', '');
+  _timer = setTimeout(function(){
+    onError('Request timed out. Confirm the sheet is set to Anyone with the link — Viewer.');
+  }, 14000);
+
+  window.google = window.google || {};
+  window.google.visualization = window.google.visualization || {};
+  window.google.visualization.Query = window.google.visualization.Query || {};
+  window.google.visualization.Query.setResponse = function(resp){
+    clearTimeout(_timer);
+    if(resp && resp.status === 'ok' && resp.table){
+      processTable(resp.table);
+    } else {
+      onError('The sheet returned an error. Confirm it is set to public.');
+    }
+  };
+
+  var old = document.getElementById('gviz-s');
+  if(old) old.parentNode.removeChild(old);
+  var s = document.createElement('script');
+  s.id = 'gviz-s';
+  s.src = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
+          '/gviz/tq?tqx=out:json&sheet=Sheet1&headers=0';
+  s.onerror = function(){ clearTimeout(_timer); onError('Script load failed. Check your connection.'); };
+  document.head.appendChild(s);
+}
+
+function processTable(table){
+  var rows = table.rows;
+  var data = {};
+  SUBJECTS.forEach(function(s){ data[s] = {}; });
+
+  for(var ri = 2; ri < rows.length; ri++){
+    var row = rows[ri].c;
+    SUBJECTS.forEach(function(s, si){
+      var base = COL_BASE[si];
+      var pc2 = row[base + 1];
+      var mc  = row[base + 2];
+      if(!pc2 || pc2.v === null) return;
+      var prof = String(pc2.v).trim();
+      var mark = parseFloat(mc && mc.v);
+      if(!prof || isNaN(mark)) return;
+      if(!data[s][prof]) data[s][prof] = [];
+      data[s][prof].push(mark);
+    });
+  }
+
+  window._data  = data;
+  window._stats = computeStats(data);
+  window._ready = true;
+  var total = SUBJECTS.reduce(function(acc, s){
+    return window._stats[s] ? acc + window._stats[s].all.length : acc;
+  }, 0);
+  setStatus('Data loaded — ' + total + ' records · ' + new Date().toLocaleTimeString(), 'live');
+  _built = {};
+  buildOverview();
+}
+
+function onError(msg){
+  setStatus('Data could not be loaded', 'err');
+  document.getElementById('ov-loading').innerHTML =
+    '<div class="err-state"><strong>Unable to load data</strong><br><br>' + msg +
+    '<br><br><button onclick="reloadData()" style="padding:.4rem .9rem;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:.76rem">Retry</button></div>';
+}
+function setStatus(msg, state){
+  document.getElementById('status-text').textContent = msg;
+  document.getElementById('sdot').className = 'sdot' + (state ? ' ' + state : '');
+}
+function reloadData(){
+  window._ready = false; _built = {}; destroyAll();
+  document.getElementById('ov-body').style.display = 'none';
+  document.getElementById('ov-loading').style.display = 'block';
+  document.getElementById('ov-loading').innerHTML = '<span class="spinner"></span>Refreshing…';
+  loadSheetData();
+}
+
+/* ── STATISTICS ── */
+var S = {
+  mean: function(a){ return a.reduce(function(s, x){ return s + x; }, 0) / a.length; },
+  variance: function(a){ var m = S.mean(a); return a.reduce(function(s, x){ return s + (x-m)*(x-m); }, 0) / a.length; },
+  std: function(a){ return Math.sqrt(S.variance(a)); },
+  sorted: function(a){ return a.slice().sort(function(x, y){ return x - y; }); },
+  median: function(a){ var s = S.sorted(a), m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m-1] + s[m]) / 2; },
+  q1: function(a){ var s = S.sorted(a); return s[Math.floor(s.length * 0.25)] || 0; },
+  q3: function(a){ var s = S.sorted(a); return s[Math.floor(s.length * 0.75)] || 0; },
+  skew: function(a){ var m = S.mean(a), sd = S.std(a); if(!sd) return 0; return a.reduce(function(acc, x){ return acc + Math.pow((x-m)/sd, 3); }, 0) / a.length; },
+  kurt: function(a){ var m = S.mean(a), sd = S.std(a); if(!sd) return 0; return a.reduce(function(acc, x){ return acc + Math.pow((x-m)/sd, 4); }, 0) / a.length - 3; },
+  normalPDF: function(x, mu, sig){ return Math.exp(-0.5 * Math.pow((x-mu)/sig, 2)) / (sig * Math.sqrt(2 * Math.PI)); },
+  histBins: function(marks, bins){
+    var lo = 0, hi = MAX_MARK, w = (hi - lo) / bins;
+    var counts = new Array(bins).fill(0);
+    marks.forEach(function(v){
+      var b = Math.min(Math.floor((v - lo) / w), bins - 1);
+      if(b >= 0) counts[b]++;
+    });
+    return {
+      labels: Array.from({length: bins}, function(_, i){ return (lo + i * w).toFixed(0); }),
+      counts: counts
+    };
+  },
+  normalCurve: function(marks, bins){
+    var mu = S.mean(marks), sig = S.std(marks) || 1;
+    var n = marks.length, lo = 0, hi = MAX_MARK, w = (hi - lo) / bins;
+    return Array.from({length: bins}, function(_, i){
+      return +(S.normalPDF(lo + (i + 0.5) * w, mu, sig) * n * w).toFixed(2);
+    });
+  }
+};
+
+function computeStats(data){
+  var st = {};
+  SUBJECTS.forEach(function(sub){
+    var profs = Object.keys(data[sub]);
+    var all = profs.reduce(function(acc, p){ return acc.concat(data[sub][p]); }, []);
+    if(!all.length) return;
+    st[sub] = { profs: profs, all: all, mean: +S.mean(all).toFixed(2), std: +S.std(all).toFixed(2), professors: {} };
+    profs.forEach(function(p){
+      var m = data[sub][p];
+      var mn = S.mean(m), sd = S.std(m);
+      var q1 = S.q1(m), q3 = S.q3(m), iqr = q3 - q1;
+      var wLo = Math.max(Math.min.apply(null, m), q1 - 1.5 * iqr);
+      var wHi = Math.min(Math.max.apply(null, m), q3 + 1.5 * iqr);
+      var z = (mn - st[sub].mean) / (st[sub].std || 1);
+      st[sub].professors[p] = {
+        n: m.length, marks: m,
+        mean: +mn.toFixed(2), median: +S.median(m).toFixed(2), std: +sd.toFixed(2),
+        min: Math.min.apply(null, m), max: Math.max.apply(null, m),
+        q1: q1, q3: q3, iqr: +iqr.toFixed(2),
+        wLo: +wLo.toFixed(2), wHi: +wHi.toFixed(2),
+        outliers: m.filter(function(v){ return v < wLo || v > wHi; }),
+        skew: +S.skew(m).toFixed(2), kurt: +S.kurt(m).toFixed(2),
+        z: +z.toFixed(2)
+      };
+    });
+  });
+  return st;
+}
+
+/* ── CHART HELPERS ── */
+var _charts = {}, _built = {};
+function dC(id){ if(_charts[id]){ _charts[id].destroy(); delete _charts[id]; } }
+function mkC(id, cfg){
+  dC(id);
+  var el = document.getElementById(id);
+  if(!el) return;
+  _charts[id] = new Chart(el.getContext('2d'), cfg);
+}
+function destroyAll(){
+  Object.keys(_charts).forEach(function(k){ if(_charts[k]) _charts[k].destroy(); });
+  _charts = {};
+}
+function GC(){ return document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.04)'; }
+function FC(){ return document.documentElement.getAttribute('data-theme') === 'dark' ? '#8b949e' : '#94a3b8'; }
+
+function baseOpts(yTitle, yMin, yMax){
+  var opts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: {
+        grid: { color: GC() },
+        ticks: { color: FC() },
+        title: { display: !!yTitle, text: yTitle || '', color: FC(), font: { size: 10 } }
+      },
+      x: { grid: { display: false }, ticks: { color: FC(), font: { size: 9 } } }
+    }
+  };
+  if(yMin !== undefined) opts.scales.y.min = yMin;
+  if(yMax !== undefined) opts.scales.y.max = yMax;
+  return opts;
+}
+
+function legOpts(yTitle){
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 9 }, color: FC(), boxWidth: 10, padding: 10 } }
+    },
+    scales: {
+      y: { grid: { color: GC() }, ticks: { color: FC() }, title: { display: !!yTitle, text: yTitle || '', color: FC(), font: { size: 10 } } },
+      x: { grid: { display: false }, ticks: { color: FC() } }
+    }
+  };
+}
+
+function activeSubjs(){ return SUBJECTS.filter(function(s){ return window._stats && window._stats[s]; }); }
+function allProfs(){
+  var p = [];
+  activeSubjs().forEach(function(s){
+    window._stats[s].profs.forEach(function(x){ if(!p.includes(x)) p.push(x); });
+  });
+  return p;
+}
+
+/* Box plot datasets */
+function boxDS(profs, getR){
+  return [
+    {
+      label: 'Lower range',
+      data: profs.map(function(p){ var r = getR(p); return [r.wLo, r.q1]; }),
+      backgroundColor: profs.map(function(p){ return pc(p) + '2a'; }),
+      borderColor:     profs.map(function(p){ return pc(p) + '66'; }),
+      borderWidth: 1,
+      barPercentage: 0.32
+    },
+    {
+      label: 'IQR',
+      data: profs.map(function(p){ var r = getR(p); return [r.q1, r.q3]; }),
+      backgroundColor: profs.map(function(p){ return pc(p) + '88'; }),
+      borderColor:     profs.map(function(p){ return pc(p); }),
+      borderWidth: 1.5,
+      borderRadius: 3,
+      barPercentage: 0.32
+    },
+    {
+      label: 'Upper range',
+      data: profs.map(function(p){ var r = getR(p); return [r.q3, r.wHi]; }),
+      backgroundColor: profs.map(function(p){ return pc(p) + '2a'; }),
+      borderColor:     profs.map(function(p){ return pc(p) + '66'; }),
+      borderWidth: 1,
+      barPercentage: 0.32
+    },
+    {
+      label: 'Median',
+      data: profs.map(function(p){ var r = getR(p); return [r.median - 0.1, r.median + 0.1]; }),
+      backgroundColor: Array(profs.length).fill('rgba(255,255,255,.95)'),
+      borderColor:     Array(profs.length).fill('#1e293b'),
+      borderWidth: 2,
+      barPercentage: 0.42
+    }
+  ];
+}
+
+/* ── OVERVIEW ── */
+function buildOverview(){
+  var stats = window._stats, as = activeSubjs(), ap = allProfs();
+  var allM = as.reduce(function(acc, s){ return acc.concat(stats[s].all); }, []);
+  var gMean = +S.mean(allM).toFixed(2), gStd = +S.std(allM).toFixed(2);
+
+  var summCards = [
+    { v: allM.length,                         l: 'Total papers checked' },
+    { v: as.length,                            l: 'Subjects' },
+    { v: ap.length,                            l: 'Professors' },
+    { v: gMean + ' / 30',                      l: 'Overall average mark' },
+    { v: gStd,                                 l: 'Overall standard deviation' },
+    { v: Math.min.apply(null, allM),           l: 'Lowest mark recorded' },
+    { v: Math.max.apply(null, allM),           l: 'Highest mark recorded' },
+    { v: +S.median(allM).toFixed(2),           l: 'Median mark' }
+  ];
+  var scHtml = '<div class="sgrid">' + summCards.map(function(c){
+    return '<div class="scard"><div class="scard-v">' + c.v + '</div><div class="scard-l">' + c.l + '</div></div>';
+  }).join('') + '</div>';
+
+  var chipHtml = '<div class="prof-chips">' + ap.map(function(p){
+    return '<span class="prof-chip" style="background:' + pc(p) + '">' + p + '</span>';
+  }).join('') + '</div>';
+
+  var tableHtml = '<div class="tscroll"><table class="data-table"><thead><tr>' +
+    '<th>Subject</th><th>Professors</th><th>Papers</th><th>Mean</th><th>Median</th><th>Std Dev</th><th>Min</th><th>Max</th>' +
+    '</tr></thead><tbody>' +
+    as.map(function(s){
+      var st = stats[s];
+      return '<tr>' +
+        '<td><strong>' + s + '</strong></td>' +
+        '<td style="font-size:.68rem">' + st.profs.map(function(p){
+          return '<span class="prof-dot" style="background:' + pc(p) + '"></span>' + sh(p);
+        }).join('&ensp;') + '</td>' +
+        '<td class="mono">' + st.all.length + '</td>' +
+        '<td class="mono">' + st.mean + '</td>' +
+        '<td class="mono">' + S.median(st.all).toFixed(2) + '</td>' +
+        '<td class="mono">' + st.std + '</td>' +
+        '<td class="mono">' + Math.min.apply(null, st.all) + '</td>' +
+        '<td class="mono">' + Math.max.apply(null, st.all) + '</td>' +
+        '</tr>';
+    }).join('') + '</tbody></table></div>';
+
+  var chartHtml = '<div class="cg">' +
+    '<div class="card"><div class="card-title">Average mark per professor — all subjects combined</div>' +
+    '<div class="card-desc">One bar per professor, showing the mean mark awarded across all papers they corrected.</div>' +
+    '<div class="ch-md"><canvas id="ch-means"></canvas></div></div>' +
+
+    '<div class="card"><div class="card-title">Overall mark distribution</div>' +
+    '<div class="card-desc">Frequency of each mark across all papers. The orange curve shows a fitted normal distribution.</div>' +
+    '<div class="ch-md"><canvas id="ch-ghist"></canvas></div></div>' +
+
+    '<div class="card"><div class="card-title">Standard deviation per professor per subject</div>' +
+    '<div class="card-desc">Spread of marks awarded. Higher values indicate more variation within that professor\'s set of papers.</div>' +
+    '<div class="ch-md"><canvas id="ch-std"></canvas></div></div>' +
+
+    '<div class="card"><div class="card-title">Mean mark per professor per subject</div>' +
+    '<div class="card-desc">Average mark per professor broken down by subject.</div>' +
+    '<div class="ch-md"><canvas id="ch-bysub"></canvas></div></div>' +
+    '</div>';
+
+  document.getElementById('ov-body').innerHTML =
+    '<div class="sec-title">Summary Statistics</div>' +
+    '<div class="sec-sub">Aggregated across all ' + allM.length + ' mid-term papers, ' + as.length + ' subjects, and ' + ap.length + ' professors.</div>' +
+    scHtml +
+    '<div class="sec-title">Professor Index</div>' +
+    chipHtml +
+    '<div class="sec-title">Subject Summary</div>' +
+    tableHtml +
+    '<div class="sec-title">Charts</div>' +
+    chartHtml;
+
+  document.getElementById('ov-body').style.display = 'block';
+  document.getElementById('ov-loading').style.display = 'none';
+
+  setTimeout(function(){
+    var profMeans = ap.map(function(p){
+      var m = as.reduce(function(acc, s){
+        return stats[s].professors[p] ? acc.concat(stats[s].professors[p].marks) : acc;
+      }, []);
+      return m.length ? +S.mean(m).toFixed(2) : 0;
+    });
+    mkC('ch-means', {
+      type: 'bar',
+      data: {
+        labels: ap.map(sh),
+        datasets: [{
+          data: profMeans,
+          backgroundColor: ap.map(function(p){ return pc(p) + 'cc'; }),
+          borderColor: ap.map(pc),
+          borderWidth: 1,
+          borderRadius: 4
+        }]
+      },
+      options: baseOpts('Average / 30', 0, MAX_MARK)
+    });
+
+    var h = S.histBins(allM, 16), nc = S.normalCurve(allM, 16);
+    mkC('ch-ghist', {
+      type: 'bar',
+      data: {
+        labels: h.labels,
+        datasets: [
+          { type: 'bar',  label: 'Frequency',           data: h.counts, backgroundColor: 'rgba(37,99,235,.4)', borderColor: '#2563eb', borderWidth: 1, borderRadius: 2, order: 2 },
+          { type: 'line', label: 'Normal distribution',  data: nc,       borderColor: '#f97316', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 0, tension: 0.4, order: 1 }
+        ]
+      },
+      options: legOpts('Count')
+    });
+
+    mkC('ch-std', {
+      type: 'bar',
+      data: {
+        labels: as,
+        datasets: ap.map(function(p){
+          return {
+            label: sh(p),
+            data: as.map(function(s){ return stats[s].professors[p] ? stats[s].professors[p].std : null; }),
+            backgroundColor: pc(p) + '88',
+            borderColor: pc(p),
+            borderWidth: 1
+          };
+        })
+      },
+      options: legOpts('Std Dev')
+    });
+
+    mkC('ch-bysub', {
+      type: 'bar',
+      data: {
+        labels: as,
+        datasets: ap.map(function(p){
+          return {
+            label: sh(p),
+            data: as.map(function(s){ return stats[s].professors[p] ? stats[s].professors[p].mean : null; }),
+            backgroundColor: pc(p) + '88',
+            borderColor: pc(p),
+            borderWidth: 1
+          };
+        })
+      },
+      options: legOpts('Mean / 30')
+    });
+  }, 60);
+}
+
+/* ── DISTRIBUTIONS ── */
+function buildDistTab(s){
+  var stats = window._stats;
+  if(!stats[s]) return;
+  var st = stats[s];
+  document.getElementById('dist-body').innerHTML = '<div class="cg">' + st.profs.map(function(p){
+    var r = st.professors[p];
+    return '<div class="card">' +
+      '<div class="card-title" style="color:' + pc(p) + '">' + p + '</div>' +
+      '<div class="card-desc">' + s + ' &mdash; ' + r.n + ' papers &nbsp;|&nbsp; Mean: ' + r.mean + ' &nbsp;|&nbsp; Median: ' + r.median + ' &nbsp;|&nbsp; Std Dev: ' + r.std + '</div>' +
+      '<div class="ch-md"><canvas id="dc-' + s + '-' + p.replace(/\W/g, '') + '"></canvas></div></div>';
+  }).join('') + '</div>';
+
+  setTimeout(function(){
+    st.profs.forEach(function(p){
+      var r = st.professors[p];
+      var cid = 'dc-' + s + '-' + p.replace(/\W/g, '');
+      var h = S.histBins(r.marks, 10), nc = S.normalCurve(r.marks, 10);
+      mkC(cid, {
+        type: 'bar',
+        data: {
+          labels: h.labels,
+          datasets: [
+            { type: 'bar',  label: 'Frequency',          data: h.counts, backgroundColor: pc(p) + '44', borderColor: pc(p), borderWidth: 1.5, borderRadius: 2, order: 2 },
+            { type: 'line', label: 'Normal distribution', data: nc,       borderColor: '#f97316', backgroundColor: 'transparent', borderWidth: 1.5, pointRadius: 0, tension: 0.4, order: 1 }
+          ]
+        },
+        options: legOpts('Count')
+      });
+    });
+  }, 40);
+}
+
+/* ── BOX PLOTS ── */
+function buildBoxTab(){
+  var stats = window._stats, as = activeSubjs();
+  document.getElementById('box-body').innerHTML = '<div class="cg-wide">' + as.map(function(s){
+    return '<div class="card">' +
+      '<div class="card-title">' + s + '</div>' +
+      '<div class="card-desc">Box: Q1 to Q3. Centre line: median. Whiskers: full non-outlier range. Hover for values.</div>' +
+      '<div class="ch-lg"><canvas id="bx-' + s + '"></canvas></div></div>';
+  }).join('') + '</div>';
+
+  setTimeout(function(){
+    as.forEach(function(s){
+      var st = stats[s], profs = st.profs;
+      mkC('bx-' + s, {
+        type: 'bar',
+        data: {
+          labels: profs.map(sh),
+          datasets: boxDS(profs, function(p){ return st.professors[p]; })
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx){
+                  var p = profs[ctx.dataIndex], r = st.professors[p];
+                  return ['Min: ' + r.min, 'Q1: ' + r.q1, 'Median: ' + r.median, 'Q3: ' + r.q3, 'Max: ' + r.max, 'IQR: ' + r.iqr, 'Outliers: ' + r.outliers.length];
+                }
+              }
+            }
+          },
+          scales: {
+            y: { min: 0, max: MAX_MARK, grid: { color: GC() }, ticks: { color: FC() }, title: { display: true, text: 'Mark / 30', color: FC(), font: { size: 10 } } },
+            x: { grid: { display: false }, ticks: { color: FC() } }
+          }
+        }
+      });
+    });
+  }, 40);
+}
+
+/* ── SCATTER ── */
+function buildScatterTab(s){
+  var stats = window._stats;
+  if(!stats[s]) return;
+  var st = stats[s], profs = st.profs;
+
+  document.getElementById('scatter-body').innerHTML = '<div class="cg-wide">' +
+    '<div class="card full">' +
+    '<div class="card-title">' + s + ' — all student marks by professor</div>' +
+    '<div class="card-desc">Each point is one student\'s mark. Colour indicates the professor who corrected that paper.</div>' +
+    '<div class="ch-xl"><canvas id="sc-all-' + s + '"></canvas></div></div>' +
+    profs.map(function(p){
+      var r = st.professors[p];
+      return '<div class="card">' +
+        '<div class="card-title" style="color:' + pc(p) + '">' + p + '</div>' +
+        '<div class="card-desc">' + s + ' — ' + r.n + ' papers. Mean: ' + r.mean + ' (solid) &middot; Median: ' + r.median + ' (dashed)</div>' +
+        '<div class="ch-md"><canvas id="sc-s-' + s + '-' + p.replace(/\W/g, '') + '"></canvas></div></div>';
+    }).join('') + '</div>';
+
+  setTimeout(function(){
+    mkC('sc-all-' + s, {
+      type: 'scatter',
+      data: {
+        datasets: profs.map(function(p){
+          var r = st.professors[p];
+          return {
+            label: p,
+            data: r.marks.map(function(v, i){ return { x: i + Math.random() * 0.5 - 0.25, y: v }; }),
+            backgroundColor: pc(p) + '99',
+            borderColor: pc(p),
+            pointRadius: 4,
+            pointHoverRadius: 6
+          };
+        })
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, color: FC(), boxWidth: 10, padding: 10 } } },
+        scales: {
+          y: { min: 0, max: MAX_MARK, grid: { color: GC() }, ticks: { color: FC() }, title: { display: true, text: 'Mark / 30', color: FC(), font: { size: 10 } } },
+          x: { display: false }
+        }
+      }
+    });
+
+    profs.forEach(function(p){
+      var r = st.professors[p];
+      var cid = 'sc-s-' + s + '-' + p.replace(/\W/g, '');
+      mkC(cid, {
+        type: 'scatter',
+        data: {
+          datasets: [
+            {
+              label: 'Students',
+              data: r.marks.map(function(v){ return { x: 0.5 + Math.random() * 0.6, y: v }; }),
+              backgroundColor: pc(p) + '99',
+              borderColor: pc(p),
+              pointRadius: 5,
+              order: 3
+            },
+            {
+              label: 'Mean (' + r.mean + ')',
+              data: [{ x: 0.1, y: r.mean }, { x: 1.5, y: r.mean }],
+              type: 'line',
+              borderColor: pc(p),
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: false,
+              order: 1
+            },
+            {
+              label: 'Median (' + r.median + ')',
+              data: [{ x: 0.1, y: r.median }, { x: 1.5, y: r.median }],
+              type: 'line',
+              borderColor: pc(p),
+              borderWidth: 1.5,
+              borderDash: [4, 3],
+              pointRadius: 0,
+              fill: false,
+              order: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { font: { size: 8 }, color: FC(), boxWidth: 10, padding: 8 } } },
+          scales: {
+            y: { min: 0, max: MAX_MARK, grid: { color: GC() }, ticks: { color: FC() }, title: { display: true, text: 'Mark', color: FC(), font: { size: 10 } } },
+            x: { display: false }
+          }
+        }
+      });
+    });
+  }, 40);
+}
+
+/* ── BY SUBJECT ── */
+function buildSubjTab(s){
+  var stats = window._stats;
+  if(!stats[s]) return;
+  var st = stats[s], profs = st.profs;
+
+  var kHtml = '<div class="sgrid">' + [
+    { v: st.all.length,                        l: 'Total papers' },
+    { v: profs.length,                          l: 'Professors' },
+    { v: st.mean + ' / 30',                    l: 'Subject mean' },
+    { v: +S.median(st.all).toFixed(2),         l: 'Subject median' },
+    { v: st.std,                                l: 'Standard deviation' },
+    { v: Math.min.apply(null, st.all),         l: 'Minimum mark' },
+    { v: Math.max.apply(null, st.all),         l: 'Maximum mark' }
+  ].map(function(c){
+    return '<div class="scard"><div class="scard-v">' + c.v + '</div><div class="scard-l">' + c.l + '</div></div>';
+  }).join('') + '</div>';
+
+  var ch = '<div class="cg">' +
+    '<div class="card"><div class="card-title">Distribution — ' + s + '</div>' +
+    '<div class="card-desc">Frequency of marks across all professors combined, with fitted normal curve.</div>' +
+    '<div class="ch-md"><canvas id="sj-dist"></canvas></div></div>' +
+
+    '<div class="card"><div class="card-title">Box plot — ' + s + '</div>' +
+    '<div class="card-desc">Q1, median, Q3, and range per professor. Hover bars for exact values.</div>' +
+    '<div class="ch-md"><canvas id="sj-box"></canvas></div></div>' +
+
+    '<div class="card"><div class="card-title">Mean mark — ' + s + '</div>' +
+    '<div class="card-desc">Average mark awarded by each professor for this subject.</div>' +
+    '<div class="ch-md"><canvas id="sj-mean"></canvas></div></div>' +
+
+    '<div class="card"><div class="card-title">Deviation from subject mean (Z-score) — ' + s + '</div>' +
+    '<div class="card-desc">Number of standard deviations each professor\'s mean is above or below the subject average. A value of 0 indicates exactly at the subject mean.</div>' +
+    '<div class="ch-md"><canvas id="sj-z"></canvas></div></div>' +
+
+    '<div class="card full"><div class="card-title">Scatter plot — ' + s + ' — all students</div>' +
+    '<div class="card-desc">Each point represents one student\'s mark, coloured by professor.</div>' +
+    '<div class="ch-lg"><canvas id="sj-scat"></canvas></div></div>' +
+    '</div>';
+
+  var cards = '<div class="pcards">' + profs.map(function(p){
+    var r = st.professors[p], col = pc(p);
+    return '<div class="pcard" style="border-top-color:' + col + '">' +
+      '<div class="pcard-name">' + p + '</div>' +
+      '<div class="pcard-role">' + r.n + ' papers</div>' +
+      [
+        ['Mean',          r.mean + ' / 30'],
+        ['Median',        r.median + ' / 30'],
+        ['Std Dev',       r.std],
+        ['Min',           r.min],
+        ['Max',           r.max],
+        ['Q1',            r.q1],
+        ['Q3',            r.q3],
+        ['IQR',           r.iqr],
+        ['Outlier papers',r.outliers.length],
+        ['Skewness',      r.skew],
+        ['Kurtosis',      r.kurt],
+        ['Z-score',       r.z]
+      ].map(function(row){
+        return '<div class="prow"><span class="prow-l">' + row[0] + '</span><span class="prow-v">' + row[1] + '</span></div>';
+      }).join('') +
+    '</div>';
+  }).join('') + '</div>';
+
+  document.getElementById('subj-body').innerHTML = kHtml + ch + cards;
+
+  setTimeout(function(){
+    var h = S.histBins(st.all, 12), nc = S.normalCurve(st.all, 12);
+    mkC('sj-dist', {
+      type: 'bar',
+      data: {
+        labels: h.labels,
+        datasets: [
+          { type: 'bar',  label: 'Frequency',          data: h.counts, backgroundColor: 'rgba(37,99,235,.35)', borderColor: '#2563eb', borderWidth: 1, borderRadius: 2, order: 2 },
+          { type: 'line', label: 'Normal distribution', data: nc,       borderColor: '#f97316', backgroundColor: 'transparent', borderWidth: 1.5, pointRadius: 0, tension: 0.4, order: 1 }
+        ]
+      },
+      options: legOpts('Count')
+    });
+
+    mkC('sj-box', {
+      type: 'bar',
+      data: {
+        labels: profs.map(sh),
+        datasets: boxDS(profs, function(p){ return st.professors[p]; })
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx){
+                var p = profs[ctx.dataIndex], r = st.professors[p];
+                return ['Min: ' + r.min, 'Q1: ' + r.q1, 'Median: ' + r.median, 'Q3: ' + r.q3, 'Max: ' + r.max, 'IQR: ' + r.iqr];
+              }
+            }
+          }
+        },
+        scales: {
+          y: { min: 0, max: MAX_MARK, grid: { color: GC() }, ticks: { color: FC() }, title: { display: true, text: 'Mark / 30', color: FC(), font: { size: 10 } } },
+          x: { grid: { display: false }, ticks: { color: FC() } }
+        }
+      }
+    });
+
+    mkC('sj-mean', {
+      type: 'bar',
+      data: {
+        labels: profs.map(sh),
+        datasets: [{
+          data: profs.map(function(p){ return st.professors[p].mean; }),
+          backgroundColor: profs.map(function(p){ return pc(p) + 'cc'; }),
+          borderColor: profs.map(pc),
+          borderWidth: 1,
+          borderRadius: 4
+        }]
+      },
+      options: baseOpts('Mean / 30', 0, MAX_MARK)
+    });
+
+    mkC('sj-z', {
+      type: 'bar',
+      data: {
+        labels: profs.map(sh),
+        datasets: [{
+          data: profs.map(function(p){ return st.professors[p].z; }),
+          backgroundColor: profs.map(function(p){ return pc(p) + 'aa'; }),
+          borderColor: profs.map(pc),
+          borderWidth: 1,
+          borderRadius: 4
+        }]
+      },
+      options: baseOpts('Z-score')
+    });
+
+    mkC('sj-scat', {
+      type: 'scatter',
+      data: {
+        datasets: profs.map(function(p){
+          var r = st.professors[p];
+          return {
+            label: p,
+            data: r.marks.map(function(v, i){ return { x: i + Math.random() * 0.4 - 0.2, y: v }; }),
+            backgroundColor: pc(p) + '99',
+            borderColor: pc(p),
+            pointRadius: 4
+          };
+        })
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, color: FC(), boxWidth: 10, padding: 10 } } },
+        scales: {
+          y: { min: 0, max: MAX_MARK, grid: { color: GC() }, ticks: { color: FC() }, title: { display: true, text: 'Mark / 30', color: FC(), font: { size: 10 } } },
+          x: { display: false }
+        }
+      }
+    });
+  }, 40);
+}
+
+/* ── TAB NAVIGATION ── */
+var _dS = SUBJECTS[0], _scS = SUBJECTS[0], _sjS = SUBJECTS[0];
+
+function showTab(n, el){
+  document.querySelectorAll('.tab-section').forEach(function(s){ s.classList.remove('on'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
+  document.getElementById('tab-' + n).classList.add('on');
+  if(el) el.classList.add('on');
+  if(!window._ready) return;
+  if(n === 'distributions' && !_built.dist)  { buildDistStabs();    buildDistTab(_dS);   _built.dist = true; }
+  if(n === 'boxplots'      && !_built.box)   { buildBoxTab();                            _built.box  = true; }
+  if(n === 'scatter'       && !_built.scat)  { buildScatterStabs(); buildScatterTab(_scS); _built.scat = true; }
+  if(n === 'subject'       && !_built.subj)  { buildSubjStabs();    buildSubjTab(_sjS);   _built.subj = true; }
+}
+
+function buildStabs(id, cur, fn){
+  document.getElementById(id).innerHTML = activeSubjs().map(function(s){
+    return '<button class="stab' + (s === cur ? ' on' : '') + '" onclick="' + fn + '(\'' + s + '\',this)">' + s + '</button>';
+  }).join('');
+}
+function buildDistStabs()   { buildStabs('dist-stabs',    _dS,  'swD');  }
+function buildScatterStabs(){ buildStabs('scatter-stabs', _scS, 'swSc'); }
+function buildSubjStabs()   { buildStabs('subj-stabs',    _sjS, 'swSj'); }
+
+window.swD  = function(s, el){ _dS  = s; document.querySelectorAll('#dist-stabs .stab').forEach(function(b){ b.classList.remove('on'); }); if(el) el.classList.add('on'); buildDistTab(s); };
+window.swSc = function(s, el){ _scS = s; document.querySelectorAll('#scatter-stabs .stab').forEach(function(b){ b.classList.remove('on'); }); if(el) el.classList.add('on'); buildScatterTab(s); };
+window.swSj = function(s, el){ _sjS = s; document.querySelectorAll('#subj-stabs .stab').forEach(function(b){ b.classList.remove('on'); }); if(el) el.classList.add('on'); buildSubjTab(s); };
+
+/* ── BOOT ── */
+loadSheetData();
+</script>
+</body>
+</html>
