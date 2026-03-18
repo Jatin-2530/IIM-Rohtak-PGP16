@@ -392,7 +392,7 @@ canvas{max-height:220px!important;}
     <div class="tab on" onclick="showTab('ranklist',this)">Ranklist</div>
     <div class="tab" onclick="showTab('myperf',this)">My Performance</div>
     <div class="tab" onclick="showTab('subjects',this)">Subject Boards</div>
-    <div class="tab" onclick="showTab('profanalysis',this)">Marks Analysis</div>
+    <div class="tab" onclick="window.location.href='professor.html'")">Marks Analysis</div>
     <div class="tab" id="admtab" onclick="showTab('admin',this)" style="display:none">Admin</div>
   </div>
 
@@ -535,11 +535,6 @@ canvas{max-height:220px!important;}
         <div id="vislog"></div>
       </div>
     </div>
-
-    <!-- MARKS ANALYSIS -->
-    <div id="tab-profanalysis" style="display:none">
-      <iframe src="professor.html" style="width:100%;height:calc(100vh - 120px);border:none;display:block;" loading="lazy"></iframe>
-</div>
 
   </div>
 </div>
@@ -1036,7 +1031,7 @@ function closeM(){document.getElementById("mov").classList.remove("on");}
 
 // ── TABS ──
 function showTab(n,el){
-  ["ranklist","myperf","subjects","admin","profanalysis"].forEach(function(t){document.getElementById("tab-"+t).style.display=t===n?"block":"none";});
+  ["ranklist","myperf","subjects","admin"].forEach(function(t){document.getElementById("tab-"+t).style.display=t===n?"block":"none";});
   document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("on");});el.classList.add("on");
 }
 
