@@ -570,9 +570,7 @@ var curUser=null,charts={};
 
 // ── THEME ──
 (function(){var t=localStorage.getItem("theme")||"light";document.documentElement.setAttribute("data-theme",t);})();
-function toggleTheme(){var d=document.documentElement,dk=d.getAttribute("data-theme")==="dark";d.setAttribute("data-theme",dk?"light":"dark");document.getElementById("tbtn").innerHTML=dk?"&#9790;":"&#9728;";localStorage.setItem("theme",dk?"light":"dark");if(perf_s)rebuildCharts();
-                      var iframe = document.querySelector('#tab-profanalysis iframe');
-if(iframe) iframe.contentWindow.postMessage({type:'setTheme', theme: dk?'light':'dark'}, '*');}
+function toggleTheme(){var d=document.documentElement,dk=d.getAttribute("data-theme")==="dark";d.setAttribute("data-theme",dk?"light":"dark");document.getElementById("tbtn").innerHTML=dk?"&#9790;":"&#9728;";localStorage.setItem("theme",dk?"light":"dark");if(perf_s)rebuildCharts();}
 
 // ── AUTH ──
 var CLIENT_ID = "660640000227-4mc6fpcj09mn55c7tbtclq6eh1m7hd5v.apps.googleusercontent.com";
