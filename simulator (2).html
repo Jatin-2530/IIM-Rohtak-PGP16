@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PGP16 · Grade Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ══ VARIABLES ══ */
+:root {
+  --bg:#f2f3f7; --surface:#fff; --surface2:#f7f8fb; --surface3:#eef0f6;
+  --border:#e2e5ee; --border2:rgba(0,0,0,.05);
+  --navy:#0f1623; --text:#21293e; --muted:#6b7592; --light:#a0a9c0;
+  --blue:#3b6cff; --blue-bg:#eef1ff; --blue-dim:rgba(59,108,255,.12);
+  --indigo:#5f3dc4; --indigo-bg:#f0ecff;
+  --green:#0a8a5c; --green-bg:#e6f7f1; --green-soft:rgba(10,138,92,.15);
+  --red:#d63030; --red-bg:#fff0f0; --red-soft:rgba(214,48,48,.12);
+  --amber:#c47a0f; --amber-bg:#fef8ec;
+  --gold:#b8973a; --gold2:#d4af58;
+  --s1:0 1px 4px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --s2:0 4px 20px rgba(0,0,0,.08);
+  --s3:0 16px 48px rgba(0,0,0,.14);
+  --r:10px; --r2:14px; --r3:18px;
+  /* Curve zone fills & border colors */
+  --zfAp:rgba(16,185,129,.22); --zbAp:#059669;
+  --zfA :rgba(59,130,246,.2);  --zbA :#3b82f6;
+  --zfAm:rgba(139,92,246,.2);  --zbAm:#7c3aed;
+  --zfBp:rgba(100,116,139,.18);--zbBp:#64748b;
+  --zfB :rgba(234,179,8,.2);   --zbB :#ca8a04;
+  --zfBm:rgba(239,68,68,.2);   --zbBm:#dc2626;
+  --zfC :rgba(219,39,119,.18); --zbC :#db2777;
+}
+[data-theme="dark"] {
+  --bg:#0b0e17; --surface:#141824; --surface2:#1c2133; --surface3:#222840;
+  --border:#2c3352; --border2:rgba(255,255,255,.04);
+  --navy:#dde3f0; --text:#b8c0d8; --muted:#6b7898; --light:#45506e;
+  --blue:#5b8aff; --blue-bg:#0d1535; --blue-dim:rgba(91,138,255,.14);
+  --indigo:#9575f7; --indigo-bg:#180f38;
+  --green:#22c078; --green-bg:#051f14; --green-soft:rgba(34,192,120,.15);
+  --red:#f87171; --red-bg:#1f0a0a; --red-soft:rgba(248,113,113,.12);
+  --amber:#fbbf24; --amber-bg:#1f1500;
+  --zfAp:rgba(5,150,105,.25);  --zbAp:#34d399;
+  --zfA :rgba(59,130,246,.22); --zbA :#60a5fa;
+  --zfAm:rgba(124,58,237,.25); --zbAm:#a78bfa;
+  --zfBp:rgba(100,116,139,.22);--zbBp:#94a3b8;
+  --zfB :rgba(202,138,4,.22);  --zbB :#fbbf24;
+  --zfBm:rgba(220,38,38,.22);  --zbBm:#f87171;
+  --zfC :rgba(219,39,119,.2);  --zbC :#f472b6;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { font-size:14px; scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+/* ── HEADER ── */
+.hdr {
+  background:var(--surface); border-bottom:1px solid var(--border);
+  padding:.65rem 1.5rem; display:flex; align-items:center;
+  justify-content:space-between; box-shadow:var(--s1);
+  position:sticky; top:0; z-index:50;
+}
+.hdr-l { display:flex; align-items:center; gap:.65rem; }
+.hdr-logo {
+  width:32px; height:32px; border-radius:8px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:flex; align-items:center; justify-content:center;
+  font-family:'DM Serif Display',serif; font-size:.78rem; font-weight:400; color:#fff;
+  letter-spacing:.02em; flex-shrink:0;
+}
+.hdr-title h1 { font-family:'DM Serif Display',serif; font-size:.94rem; color:var(--navy); }
+.hdr-title p  { font-size:.6rem; color:var(--muted); margin-top:.06rem; letter-spacing:.01em; }
+.hdr-r { display:flex; align-items:center; gap:.4rem; }
+.ibtn {
+  height:28px; border-radius:7px; border:1px solid var(--border);
+  background:var(--surface2); display:flex; align-items:center;
+  justify-content:center; cursor:pointer; color:var(--muted);
+  font-size:.68rem; font-weight:600; transition:all .15s;
+  padding:0 .65rem; white-space:nowrap; font-family:'DM Sans',sans-serif;
+}
+.ibtn:hover { background:var(--blue-bg); color:var(--blue); border-color:var(--blue); }
+.ibtn.icon  { width:28px; padding:0; font-size:.85rem; }
+
+/* ── LAYOUT ── */
+.wrap { padding:1rem 1.5rem; max-width:1440px; margin:0 auto; }
+
+/* ── SEARCH ── */
+.search-wrap { position:relative; max-width:460px; margin-bottom:.85rem; }
+.search-wrap input {
+  width:100%; padding:.55rem 1rem; background:var(--surface);
+  border:1.5px solid var(--border); border-radius:var(--r2);
+  color:var(--text); font-family:'DM Sans',sans-serif; font-size:.82rem;
+  outline:none; transition:border-color .15s; box-shadow:var(--s1);
+}
+.search-wrap input:focus { border-color:var(--blue); }
+.search-wrap input::placeholder { color:var(--light); }
+.sq-drop {
+  position:absolute; top:calc(100% + 5px); left:0; right:0;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r2); box-shadow:var(--s3); z-index:200;
+  max-height:300px; overflow-y:auto; display:none;
+}
+.sq-drop.show { display:block; }
+.sq-item {
+  display:flex; align-items:center; gap:.6rem; padding:.48rem .85rem;
+  cursor:pointer; transition:background .1s; border-bottom:1px solid var(--border2);
+}
+.sq-item:last-child { border-bottom:none; }
+.sq-item:hover { background:var(--blue-bg); }
+.sq-av {
+  width:27px; height:27px; border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--indigo));
+  display:flex; align-items:center; justify-content:center;
+  font-size:.58rem; font-weight:700; color:#fff; flex-shrink:0;
+}
+.sq-name { font-size:.78rem; font-weight:600; color:var(--navy); }
+.sq-meta { font-size:.6rem; color:var(--muted); }
+.sq-empty { padding:.85rem; text-align:center; font-size:.72rem; color:var(--muted); font-style:italic; }
+
+/* ── STATUS ── */
+.status-bar {
+  font-size:.68rem; color:var(--muted); margin-bottom:.85rem;
+  padding:.4rem .75rem; background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); display:inline-flex; align-items:center; gap:.4rem;
+}
+.status-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.status-dot.ok      { background:var(--green); animation:pulse 2s infinite; }
+.status-dot.loading { background:var(--amber); animation:pulse 1s infinite; }
+.status-dot.err     { background:var(--red); }
+
+/* ── STUDENT CARD ── */
+.s-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r3); padding:.9rem 1.3rem; margin-bottom:.9rem;
+  display:flex; align-items:center; gap:1.1rem; flex-wrap:wrap; box-shadow:var(--s1);
+}
+.s-av {
+  width:44px; height:44px; border-radius:12px;
+  background:linear-gradient(135deg,var(--blue),var(--indigo));
+  display:flex; align-items:center; justify-content:center;
+  font-size:.9rem; font-weight:700; color:#fff; flex-shrink:0;
+  font-family:'DM Serif Display',serif;
+}
+.s-name { font-family:'DM Serif Display',serif; font-size:1.05rem; color:var(--navy); }
+.s-meta { font-size:.62rem; color:var(--muted); margin-top:.12rem; display:flex; gap:.35rem; align-items:center; flex-wrap:wrap; }
+.s-stats { display:flex; gap:1.3rem; margin-left:auto; flex-wrap:wrap; }
+.s-stat { text-align:center; }
+.s-stat-v { font-family:'DM Serif Display',serif; font-size:1.15rem; }
+.s-stat-l { font-size:.5rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-top:.04rem; }
+
+/* ── BADGES ── */
+.badge { display:inline-block; padding:.07rem .32rem; border-radius:4px; font-size:.58rem; font-weight:600; }
+.bpgp { background:var(--blue-bg); color:var(--blue); }
+.bipm { background:#fce7f3; color:#9d174d; }
+[data-theme="dark"] .bipm { background:#2d0f1d; color:#f9a8d4; }
+.bsec { background:var(--indigo-bg); color:var(--indigo); }
+.rb { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; font-weight:700; font-size:.65rem; font-family:'JetBrains Mono',monospace; }
+.r1 { background:linear-gradient(135deg,#fde68a,#fbbf24); color:#78350f; }
+.r2 { background:linear-gradient(135deg,#e2e8f0,#94a3b8); color:#1e293b; }
+.r3 { background:linear-gradient(135deg,#fed7aa,#fb923c); color:#7c2d12; }
+.ro { background:var(--surface2); color:var(--muted); font-size:.6rem; border:1px solid var(--border); }
+
+/* ── GRADE CHIP ── */
+.gc { display:inline-block; padding:.09rem .32rem; border-radius:4px; font-size:.65rem; font-weight:700; font-family:'JetBrains Mono',monospace; }
+.gAp { background:#f0fdf4; color:#14532d; border:1px solid #a7f3d0; }
+.gA  { background:#eff6ff; color:#1e3a8a; border:1px solid #bfdbfe; }
+.gAm { background:#f5f3ff; color:#3b0764; border:1px solid #ddd6fe; }
+.gBp { background:#f8fafc; color:#334155; border:1px solid #cbd5e1; }
+.gB  { background:#fefce8; color:#713f12; border:1px solid #fde68a; }
+.gBm { background:#fff1f2; color:#881337; border:1px solid #fecdd3; }
+.gC  { background:#fdf2f8; color:#831843; border:1px solid #fbcfe8; }
+[data-theme="dark"] .gAp { background:#052e16; color:#6ee7b7; border-color:#065f46; }
+[data-theme="dark"] .gA  { background:#0d1f3c; color:#93c5fd; border-color:#1e40af; }
+[data-theme="dark"] .gAm { background:#1a1035; color:#c4b5fd; border-color:#5b21b6; }
+[data-theme="dark"] .gBp { background:#1e2535; color:#94a3b8; border-color:#475569; }
+[data-theme="dark"] .gB  { background:#2a1d00; color:#fde68a; border-color:#92400e; }
+[data-theme="dark"] .gBm { background:#2c0f1a; color:#fda4af; border-color:#9f1239; }
+[data-theme="dark"] .gC  { background:#2d1527; color:#f9a8d4; border-color:#831843; }
+
+/* ── SUBJECT GRID ── */
+.subj-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.8rem; margin-bottom:.9rem; }
+@media(max-width:1080px) { .subj-grid { grid-template-columns:repeat(2,1fr); } }
+@media(max-width:580px)  { .subj-grid { grid-template-columns:1fr; } }
+
+/* ── SUBJECT CARD ── */
+.subj-card {
+  background:var(--surface); border:1.5px solid var(--border);
+  border-radius:var(--r3); box-shadow:var(--s1);
+  transition:border-color .2s, box-shadow .2s; overflow:hidden;
+}
+.subj-card:hover  { border-color:var(--blue); box-shadow:var(--s2); }
+.subj-card.changed { border-color:var(--amber); }
+
+/* card header */
+.sc-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:.72rem 1rem .45rem;
+}
+.sc-name { font-family:'DM Serif Display',serif; font-size:1rem; color:var(--navy); }
+.sc-cr   { font-size:.56rem; color:var(--muted); margin-top:.04rem; font-weight:500; }
+.sc-rank { text-align:right; }
+.sc-rank-n { font-family:'JetBrains Mono',monospace; font-size:1rem; font-weight:600; color:var(--navy); }
+.sc-rank-l { font-size:.5rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; }
+
+/* curve container */
+.sc-curve { padding:0 .65rem .4rem; line-height:0; }
+
+/* grade row */
+.sc-grade-row {
+  display:flex; align-items:center; gap:.4rem;
+  padding:.42rem .95rem; border-top:1px solid var(--border2);
+  background:var(--surface2); min-height:2rem;
+}
+.sc-grade-label { font-size:.54rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); font-weight:700; }
+.sim-chip {
+  font-size:.84rem; padding:.13rem .48rem; border-radius:6px;
+  font-weight:700; font-family:'JetBrains Mono',monospace;
+  transition:all .2s; min-width:2.1rem; text-align:center;
+}
+.was-sep  { font-size:.58rem; color:var(--light); margin:0 .1rem; }
+.delta-ico { font-size:.64rem; font-weight:800; margin-left:auto; padding:.1rem .28rem; border-radius:4px; }
+.delta-up  { color:var(--green); background:var(--green-bg); }
+.delta-dn  { color:var(--red); background:var(--red-bg); }
+.delta-eq  { color:var(--light); }
+
+/* bounds section */
+.sc-bounds { padding:.5rem .95rem .7rem; }
+.sc-bounds-label {
+  font-size:.52rem; text-transform:uppercase; letter-spacing:.07em;
+  color:var(--muted); font-weight:700; margin-bottom:.42rem;
+}
+.bounds-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.32rem; }
+.bound-cell { display:flex; flex-direction:column; gap:.1rem; }
+.bound-lbl  { font-size:.5rem; font-weight:700; color:var(--muted); letter-spacing:.04em; text-align:center; }
+.bound-inp-row { display:flex; align-items:center; gap:2px; }
+.bound-btn {
+  width:16px; height:22px; border:1px solid var(--border);
+  background:var(--surface2); color:var(--muted); font-size:.72rem;
+  cursor:pointer; border-radius:3px; display:flex; align-items:center;
+  justify-content:center; flex-shrink:0; transition:all .1s; padding:0;
+  line-height:1; font-family:'DM Sans',sans-serif;
+}
+.bound-btn:hover { background:var(--blue-dim); color:var(--blue); border-color:var(--blue); }
+.bound-btn:active { transform:scale(.9); }
+.bound-inp {
+  flex:1; min-width:0; padding:.22rem .1rem; background:var(--surface2);
+  border:1.5px solid var(--border); border-radius:4px; color:var(--text);
+  font-family:'JetBrains Mono',monospace; font-size:.69rem; outline:none;
+  text-align:center; transition:all .15s; -moz-appearance:textfield;
+}
+.bound-inp::-webkit-inner-spin-button,
+.bound-inp::-webkit-outer-spin-button { -webkit-appearance:none; }
+.bound-inp:focus { border-color:var(--blue); background:var(--blue-bg); }
+.bound-inp.active-bound {
+  border-color:var(--green); background:var(--green-bg);
+  color:var(--green); font-weight:600;
+}
+
+/* ── LIVE BAR ── */
+.live-bar {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r2); padding:.85rem 1.3rem; margin-bottom:.85rem;
+  display:flex; align-items:center; gap:1.1rem; flex-wrap:wrap;
+  box-shadow:var(--s1);
+}
+.live-blk { display:flex; flex-direction:column; gap:.1rem; }
+.live-lbl { font-size:.52rem; text-transform:uppercase; letter-spacing:.09em; color:var(--muted); font-weight:700; }
+.live-val { font-family:'DM Serif Display',serif; font-size:1.35rem; }
+.live-arrow { font-size:1rem; color:var(--light); }
+.live-sep { width:1px; height:34px; background:var(--border); margin:0 .2rem; }
+.live-delta { font-size:.68rem; font-weight:600; padding:.13rem .42rem; border-radius:5px; font-family:'JetBrains Mono',monospace; }
+.ld-up { background:var(--green-bg); color:var(--green); }
+.ld-dn { background:var(--red-bg); color:var(--red); }
+.ld-eq { background:var(--surface2); color:var(--muted); }
+
+/* ── SUMMARY TABLE ── */
+.summary-wrap {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r2); overflow:hidden; box-shadow:var(--s1);
+  margin-bottom:.85rem;
+}
+.summary-hdr {
+  padding:.58rem 1rem; border-bottom:1px solid var(--border);
+  background:var(--surface2); display:flex; align-items:center; gap:.5rem;
+}
+.summary-hdr h3 { font-family:'DM Serif Display',serif; font-size:.9rem; color:var(--navy); }
+.sum-tbl { width:100%; border-collapse:collapse; font-size:.75rem; }
+.sum-tbl th {
+  padding:.38rem .9rem; background:var(--surface3);
+  text-align:center; font-size:.56rem; letter-spacing:.07em;
+  text-transform:uppercase; color:var(--muted); font-weight:700;
+  border-bottom:1px solid var(--border);
+}
+.sum-tbl th:first-child { text-align:left; padding-left:1rem; }
+.sum-tbl td {
+  padding:.38rem .9rem; border-bottom:1px solid var(--border2);
+  text-align:center; vertical-align:middle;
+}
+.sum-tbl td:first-child { text-align:left; font-weight:600; color:var(--navy); padding-left:1rem; font-family:'JetBrains Mono',monospace; font-size:.7rem; }
+.sum-tbl tr:last-child td { border-bottom:none; }
+.sum-tbl tr:hover td { background:var(--surface2); }
+.sum-rank { font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--muted); }
+.sum-delta-up { color:var(--green); font-size:.7rem; font-weight:700; }
+.sum-delta-dn { color:var(--red); font-size:.7rem; font-weight:700; }
+.sum-tgpa-row td { background:var(--blue-bg) !important; font-weight:600; }
+.sum-tgpa-row td:first-child { color:var(--blue); }
+
+/* ── SCENARIO CONTROLS ── */
+.scen-ctrl {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r2); padding:.68rem 1rem; margin-bottom:.85rem;
+  display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;
+  box-shadow:var(--s1);
+}
+.scen-ctrl-label { font-size:.68rem; font-weight:700; color:var(--navy); white-space:nowrap; }
+.scen-ctrl input {
+  padding:.35rem .72rem; background:var(--surface2);
+  border:1.5px solid var(--border); border-radius:7px;
+  color:var(--text); font-family:'DM Sans',sans-serif;
+  font-size:.73rem; outline:none; transition:border-color .15s; min-width:140px;
+}
+.scen-ctrl input:focus { border-color:var(--blue); }
+.btn {
+  padding:.35rem .85rem; border-radius:7px; border:1.5px solid transparent;
+  font-size:.7rem; font-weight:600; cursor:pointer; transition:all .15s;
+  font-family:'DM Sans',sans-serif; white-space:nowrap;
+}
+.btn-save { background:var(--blue); color:#fff; }
+.btn-save:hover { opacity:.88; }
+.btn-rst  { background:var(--surface2); color:var(--muted); border-color:var(--border); }
+.btn-rst:hover { border-color:var(--blue); color:var(--blue); }
+.btn-clr  { background:var(--red-bg); color:var(--red); border-color:#fecdd3; }
+.btn-clr:hover { background:var(--red); color:#fff; }
+.btn-pdf  { background:linear-gradient(135deg,var(--gold),var(--gold2)); color:#fff; }
+.btn-pdf:hover { opacity:.88; }
+.scen-count { font-size:.64rem; color:var(--muted); margin-left:auto; }
+
+/* ── SCENARIO TABLE ── */
+.scen-wrap {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r2); overflow:hidden; box-shadow:var(--s1); margin-bottom:1.5rem;
+}
+.scen-wrap-hdr {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:.58rem 1rem; border-bottom:1px solid var(--border); background:var(--surface2);
+}
+.scen-wrap-hdr h3 { font-family:'DM Serif Display',serif; font-size:.88rem; color:var(--navy); }
+.scen-scroll { overflow-x:auto; }
+.scen-tbl { width:100%; border-collapse:collapse; font-size:.74rem; }
+.scen-tbl th {
+  padding:.42rem .85rem; background:var(--surface3);
+  text-align:center; font-size:.56rem; letter-spacing:.07em;
+  text-transform:uppercase; color:var(--muted); font-weight:700;
+  border-bottom:1px solid var(--border); white-space:nowrap;
+}
+.scen-tbl th:first-child { text-align:left; }
+.scen-tbl td {
+  padding:.38rem .85rem; border-bottom:1px solid var(--border2);
+  white-space:nowrap; text-align:center; vertical-align:middle;
+}
+.scen-tbl td:first-child { text-align:left; font-weight:600; color:var(--navy); }
+.scen-tbl tr:last-child td { border-bottom:none; }
+.scen-tbl .row-tg   td { background:var(--blue-bg); }
+.scen-tbl .row-rank td { background:var(--indigo-bg); }
+.scen-tbl .col-curr    { background:var(--amber-bg) !important; }
+.cell-up { color:var(--green); }
+.cell-dn { color:var(--red); }
+.del-btn  {
+  background:none; border:none; color:var(--light);
+  cursor:pointer; font-size:.8rem; padding:.1rem .22rem;
+  border-radius:3px; transition:all .1s;
+}
+.del-btn:hover { color:var(--red); background:var(--red-bg); }
+.load-btn {
+  background:none; border:1px solid var(--border); color:var(--muted);
+  cursor:pointer; font-size:.58rem; padding:.1rem .3rem;
+  border-radius:3px; transition:all .1s; margin-top:.15rem;
+  display:block; font-family:'DM Sans',sans-serif;
+}
+.load-btn:hover { border-color:var(--blue); color:var(--blue); }
+.scen-footer {
+  padding:.42rem 1rem; font-size:.59rem; color:var(--light);
+  border-top:1px solid var(--border); background:var(--surface2);
+}
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:1.4rem; right:1.4rem;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); padding:.6rem 1rem; font-size:.76rem;
+  color:var(--text); box-shadow:var(--s3); z-index:9999;
+  transform:translateY(70px); opacity:0;
+  transition:all .35s cubic-bezier(.34,1.56,.64,1);
+}
+.toast.on { transform:translateY(0); opacity:1; }
+
+/* ── EMPTY STATE ── */
+.empty-state { text-align:center; padding:3.5rem 1rem; color:var(--muted); }
+.empty-state .ei { font-size:2.5rem; margin-bottom:.8rem; }
+.empty-state h3  { font-family:'DM Serif Display',serif; color:var(--navy); margin-bottom:.4rem; font-size:1.15rem; }
+.empty-state p   { font-size:.78rem; max-width:340px; margin:0 auto; line-height:1.65; }
+
+/* ── EXPLAINER STRIP ── */
+.explainer {
+  background:var(--amber-bg); border:1px solid #fde68a;
+  border-radius:var(--r); padding:.52rem .95rem; margin-bottom:.85rem;
+  font-size:.71rem; color:var(--amber); display:flex;
+  align-items:flex-start; gap:.45rem; line-height:1.55;
+}
+
+/* ── PRINT ── */
+@media print {
+  @page { size:landscape; margin:1.2cm 1.5cm; }
+  .hdr,.search-wrap,.status-bar,.s-card,.subj-grid,.live-bar,.scen-ctrl,.summary-wrap,.explainer { display:none !important; }
+  body { background:#fff; color:#000; }
+  .wrap { padding:0; max-width:none; }
+  .scen-wrap { border:1px solid #ccc; box-shadow:none; border-radius:0; }
+  .del-btn,.load-btn { display:none; }
+  .print-hdr { display:block !important; }
+  .scen-tbl th,.scen-tbl td { padding:.32rem .65rem; font-size:.7rem; }
+  .scen-tbl .row-tg   td { background:#eff6ff !important; -webkit-print-color-adjust:exact; }
+  .scen-tbl .row-rank td { background:#f5f3ff !important; -webkit-print-color-adjust:exact; }
+  .scen-tbl .col-curr    { background:#fffbeb !important; -webkit-print-color-adjust:exact; }
+  .gc { border:1px solid #ccc !important; }
+}
+.print-hdr { display:none; margin-bottom:.9rem; }
+.print-hdr h2 { font-family:'DM Serif Display',serif; font-size:1.1rem; }
+.print-hdr p  { font-size:.7rem; color:#555; margin-top:.2rem; }
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+@media(max-width:640px) {
+  .hdr,.wrap { padding-left:.85rem; padding-right:.85rem; }
+  .live-bar { gap:.8rem; }
+  .s-stats  { gap:.8rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-l">
+    <div class="hdr-logo">IIM</div>
+    <div class="hdr-title">
+      <h1>PGP16 Academic Portal</h1>
+      <p>Term 3 &mdash; Grade Boundary Simulator &middot; Batch 2025&ndash;27</p>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <div class="ibtn icon" onclick="toggleTheme()" id="tbtn">&#9790;</div>
+    <div class="ibtn" onclick="window.location.href='marks.html'">&#8592; Marks</div>
+    <div class="ibtn" onclick="window.location.href='index.html'">&#8592; Portal</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- PRINT HEADER -->
+  <div class="print-hdr" id="print-hdr">
+    <h2>PGP16 Term 3 &mdash; Grade Boundary Simulation</h2>
+    <p id="print-sub"></p>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-wrap" id="search-section">
+    <input type="text" id="sq"
+      placeholder="&#128269;  Search by name or roll number…"
+      oninput="onSearch()" autocomplete="off">
+    <div class="sq-drop" id="sq-drop"></div>
+  </div>
+
+  <!-- STATUS -->
+  <div class="status-bar" id="status-bar">
+    <div class="status-dot loading" id="sdot"></div>
+    <span id="smsg">Loading student data…</span>
+  </div>
+
+  <!-- STUDENT PANEL -->
+  <div id="student-panel" style="display:none">
+
+    <!-- Student Card -->
+    <div class="s-card" id="s-card"></div>
+
+    <!-- Explainer -->
+    <div class="explainer">
+      <span>&#9888;</span>
+      <span><strong>How it works:</strong> Your rank in each subject is fixed.
+      Adjust the grade cutoff boundaries (the last rank that earns each grade).
+      The curve shows your position in the class distribution — as you move cutoffs,
+      your simulated grade updates live. TGPA and estimated T3 rank recalculate instantly.</span>
+    </div>
+
+    <!-- Subject Grid -->
+    <div class="subj-grid" id="subj-grid"></div>
+
+    <!-- Live Bar -->
+    <div class="live-bar" id="live-bar"></div>
+
+    <!-- Summary Table -->
+    <div class="summary-wrap">
+      <div class="summary-hdr">
+        <h3>&#128203; Grade Summary</h3>
+        <span style="font-size:.62rem;color:var(--muted);margin-left:auto">Updates live as you adjust cutoffs</span>
+      </div>
+      <table class="sum-tbl" id="sum-tbl"></table>
+    </div>
+
+    <!-- Scenario Controls -->
+    <div class="scen-ctrl">
+      <span class="scen-ctrl-label">&#128196; Scenarios</span>
+      <input type="text" id="scen-name"
+        placeholder="Name this scenario…"
+        onkeydown="if(event.key==='Enter')saveScenario()">
+      <button class="btn btn-save" onclick="saveScenario()">&#43; Save</button>
+      <button class="btn btn-rst"  onclick="resetBounds()">&#8635; Reset</button>
+      <button class="btn btn-clr"  onclick="clearScenarios()">&#215; Clear</button>
+      <button class="btn btn-pdf"  onclick="exportPDF()">&#8595; PDF</button>
+      <span class="scen-count" id="scen-count"></span>
+    </div>
+
+    <!-- Scenario Comparison Table -->
+    <div class="scen-wrap" id="scen-wrap" style="display:none">
+      <div class="scen-wrap-hdr">
+        <h3>Scenario Comparison</h3>
+        <span style="font-size:.62rem;color:var(--muted)">Amber = current actual &nbsp;&middot;&nbsp; &#8635; restores bounds</span>
+      </div>
+      <div class="scen-scroll">
+        <table class="scen-tbl" id="scen-tbl"></table>
+      </div>
+      <div class="scen-footer">&#9432; T3 Rank is estimated by counting students with TGPA strictly above the simulated value (out of 310). CG depends on T1+T2 data and cannot be simulated here.</div>
+    </div>
+
+    <!-- Empty scenario state -->
+    <div id="empty-scen" class="empty-state">
+      <div class="ei">&#128196;</div>
+      <h3>No scenarios saved yet</h3>
+      <p>Adjust the grade cutoffs above, then hit <strong>Save</strong> to record a scenario and compare outcomes side-by-side.</p>
+    </div>
+
+  </div><!-- /student-panel -->
+
+  <!-- Initial empty state -->
+  <div id="init-state" class="empty-state">
+    <div class="ei">&#127891;</div>
+    <h3>Grade Boundary Simulator</h3>
+    <p>Search for your name or roll number above to start modelling what-if grade scenarios.</p>
+  </div>
+
+</div><!-- /wrap -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   CONFIG
+   ── Deploy on GitHub Pages: works as-is (HTTPS + published sheet)
+   ── Ensure your sheet is published: File → Share → Publish to web → CSV
+══════════════════════════════════════════════════════════ */
+var CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmVJcZEVbZy5WqMY46jxkLaRFVTCYavarwJ1aDciYe7nTJ4zuLFM4w9JP7H446vQLmxQ_LakVtAFut/pub?gid=0&single=true&output=csv";
+
+/* Column indices (0-based) */
+var C = {TOT:3, RANK:12, GRD:21, TG:30, T3R:31, CG:33, ORANK:34};
+
+var SUBJECTS  = ['BRM','BE','SM','OM-2','HRM','LAB','SBIE','FM','MIS'];
+var CREDITS   = [0.75, 0.75, 1.0, 0.75, 1.0, 0.75, 0.75, 1.0, 1.0];
+var TOTAL_CR  = 7.75;
+var BND_NAMES = ['A+','A','A-','B+','B','B-'];
+var ALL_GRADES= ['A+','A','A-','B+','B','B-','C'];
+var GRADE_PTS = {'A+':10,'A':9,'A-':8,'B+':7,'B':6,'B-':5,'C+':4,'C':3,'C-':2,'D':1,'F':0};
+var GRADE_CLS = {'A+':'gAp','A':'gA','A-':'gAm','B+':'gBp','B':'gB','B-':'gBm','C':'gC','C+':'gC','C-':'gC','D':'gC','F':'gC'};
+
+/* CSS variable names for zone fill and bar colors (index matches ALL_GRADES) */
+var ZONE_FILL = ['--zfAp','--zfA','--zfAm','--zfBp','--zfB','--zfBm','--zfC'];
+var ZONE_BAR  = ['--zbAp','--zbA','--zbAm','--zbBp','--zbB','--zbBm','--zbC'];
+
+/* ── STATE ── */
+var allRows   = [];
+var student   = null;
+var bounds    = {};
+var simGrades = [];
+var simTG     = null;
+var simRank   = null;
+var scenarios = [];
+
+/* ══════════════════════════════════════════════════════════
+   THEME
+══════════════════════════════════════════════════════════ */
+(function(){
+  var t = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+})();
+
+function toggleTheme(){
+  var d = document.documentElement, dk = d.getAttribute('data-theme') === 'dark';
+  d.setAttribute('data-theme', dk ? 'light' : 'dark');
+  document.getElementById('tbtn').innerHTML = dk ? '&#9790;' : '&#9728;';
+  localStorage.setItem('theme', dk ? 'light' : 'dark');
+  if (student) refreshAllCurves();
+}
+
+/* ══════════════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════════════ */
+function pf(v){ var n=parseFloat(String(v||'').trim()); return isNaN(n)?null:n; }
+function pi(v){ var n=parseInt(String(v||'').trim(),10); return isNaN(n)?null:n; }
+function prog(roll){ return String(roll||'').toUpperCase().startsWith('IPM')?'IPM':'PGP'; }
+function ini(name){
+  return (name||'??').split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase();
+}
+function clamp(v,mn,mx){ return Math.max(mn,Math.min(mx,v)); }
+
+function gradeChip(g){
+  if(!g||!String(g).trim()) return '<span style="color:var(--muted)">—</span>';
+  var s=String(g).trim(), cl=GRADE_CLS[s]||'gB';
+  return '<span class="gc '+cl+'">'+s+'</span>';
+}
+function rankBadge(r){
+  var n=pi(r); if(n===null) return '—';
+  if(n===1) return '<span class="rb r1">1</span>';
+  if(n===2) return '<span class="rb r2">2</span>';
+  if(n===3) return '<span class="rb r3">3</span>';
+  return '<span class="rb ro">'+n+'</span>';
+}
+function toast(m){
+  var t=document.getElementById('toast');
+  t.textContent=m; t.classList.add('on');
+  setTimeout(function(){ t.classList.remove('on'); }, 2600);
+}
+function setStatus(msg, state){
+  document.getElementById('smsg').textContent=msg;
+  document.getElementById('sdot').className='status-dot '+(state||'');
+}
+
+/* ══════════════════════════════════════════════════════════
+   CSV PARSER
+══════════════════════════════════════════════════════════ */
+function parseCSV(txt){
+  var rows=[],cur=[],f='',q=false;
+  for(var i=0;i<txt.length;i++){
+    var c=txt[i],nx=txt[i+1];
+    if(q){
+      if(c==='"'&&nx==='"'){f+='"';i++;}
+      else if(c==='"'){q=false;}
+      else f+=c;
+    } else {
+      if(c==='"'){q=true;}
+      else if(c===','){cur.push(f);f='';}
+      else if(c==='\r'&&nx==='\n'){cur.push(f);rows.push(cur);cur=[];f='';i++;}
+      else if(c==='\n'||c==='\r'){cur.push(f);rows.push(cur);cur=[];f='';}
+      else f+=c;
+    }
+  }
+  if(f||cur.length){cur.push(f);rows.push(cur);}
+  return rows.filter(function(r){return r.some(function(c){return c.trim();});});
+}
+
+/* ══════════════════════════════════════════════════════════
+   LOAD DATA
+══════════════════════════════════════════════════════════ */
+async function loadData(){
+  setStatus('Loading student data…','loading');
+  try {
+    var r = await fetch(CSV_URL, {cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    var txt = await r.text();
+    var rows = parseCSV(txt);
+    allRows = rows.slice(1).map(function(row){
+      while(row.length<=C.ORANK+2) row.push('');
+      return row.map(function(c){return String(c).trim();});
+    }).filter(function(row){
+      return row.slice(0,3).some(function(v){return v!=='';});
+    });
+    setStatus(allRows.length+' students loaded — search to begin', 'ok');
+  } catch(e) {
+    setStatus('Failed to load: '+e.message, 'err');
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SEARCH
+══════════════════════════════════════════════════════════ */
+function onSearch(){
+  var q = document.getElementById('sq').value.toLowerCase().trim();
+  var drop = document.getElementById('sq-drop');
+  if(!q){ drop.classList.remove('show'); return; }
+  if(allRows.length===0){
+    drop.innerHTML='<div class="sq-empty">Data still loading…</div>';
+    drop.classList.add('show'); return;
+  }
+  var matches = allRows.filter(function(r){
+    return r[1].toLowerCase().includes(q) || r[0].toLowerCase().includes(q);
+  }).slice(0,10);
+  if(matches.length===0){
+    drop.innerHTML='<div class="sq-empty">No students found</div>';
+    drop.classList.add('show'); return;
+  }
+  drop.innerHTML = matches.map(function(r){
+    var roll=r[0],name=r[1],sec=r[2],pr=prog(roll),tg=r[C.TG]||'';
+    return '<div class="sq-item" onclick="selectStudent(\''+roll.replace(/'/g,"\\'")+'\')">'
+      +'<div class="sq-av">'+ini(name)+'</div>'
+      +'<div><div class="sq-name">'+name+'</div>'
+      +'<div class="sq-meta">'+roll+' &middot; '+pr+' &middot; Sec '+sec+(tg?' &middot; TG '+tg:'')+'</div>'
+      +'</div></div>';
+  }).join('');
+  drop.classList.add('show');
+}
+
+function selectStudent(roll){
+  var row = allRows.find(function(r){return r[0]===roll;});
+  if(!row) return;
+  document.getElementById('sq').value = row[1];
+  document.getElementById('sq-drop').classList.remove('show');
+  loadStudent(row);
+}
+
+document.addEventListener('click',function(e){
+  if(!document.getElementById('search-section').contains(e.target))
+    document.getElementById('sq-drop').classList.remove('show');
+});
+
+/* ══════════════════════════════════════════════════════════
+   LOAD STUDENT
+══════════════════════════════════════════════════════════ */
+function loadStudent(row){
+  var subjectRanks  = SUBJECTS.map(function(_,i){ return pi(row[C.RANK+i]); });
+  var subjectGrades = SUBJECTS.map(function(_,i){ return String(row[C.GRD+i]||'').trim(); });
+  var tg=pf(row[C.TG]), t3r=pi(row[C.T3R]), cg=pf(row[C.CG]), orank=pi(row[C.ORANK]);
+  student = {row:row, subjectRanks:subjectRanks, subjectGrades:subjectGrades, tg:tg, t3r:t3r, cg:cg, orank:orank};
+
+  SUBJECTS.forEach(function(s,i){
+    bounds[s] = initBounds(subjectRanks[i]||60, subjectGrades[i]||'B');
+  });
+  scenarios = [];
+
+  renderStudentCard();
+  renderSubjectGrid();
+  recompute();
+  renderSummaryTable();
+
+  document.getElementById('init-state').style.display='none';
+  document.getElementById('student-panel').style.display='block';
+  document.getElementById('scen-wrap').style.display='none';
+  document.getElementById('empty-scen').style.display='block';
+  document.getElementById('scen-count').textContent='';
+  document.getElementById('print-sub').textContent =
+    row[1]+' · '+row[0]+' · Section '+row[2]+' · '+new Date().toLocaleDateString();
+
+  toast('Loaded '+row[1]);
+}
+
+/* ══════════════════════════════════════════════════════════
+   INIT BOUNDS
+══════════════════════════════════════════════════════════ */
+function initBounds(rank, grade){
+  var idx = BND_NAMES.indexOf(grade);
+  if(idx<0) idx=4;
+  var GAP=18;
+  var raw = Array.from({length:6},function(_,i){
+    var offset=i-idx;
+    return Math.round(rank+offset*GAP+(offset>=0?3:-3));
+  });
+  raw = raw.map(function(v){return clamp(v,0,320);});
+  for(var j=1;j<6;j++){ if(raw[j]<=raw[j-1]) raw[j]=raw[j-1]+1; }
+  return raw;
+}
+
+/* ══════════════════════════════════════════════════════════
+   GRADE DERIVATION
+══════════════════════════════════════════════════════════ */
+function deriveGrade(rank, b){
+  if(rank===null||rank===undefined) return 'C';
+  for(var i=0;i<6;i++){ if(b[i]>0 && rank<=b[i]) return BND_NAMES[i]; }
+  return 'C';
+}
+
+/* ══════════════════════════════════════════════════════════
+   TGPA COMPUTATION
+══════════════════════════════════════════════════════════ */
+function computeTG(grades){
+  var sum=0;
+  SUBJECTS.forEach(function(s,i){ sum+=(GRADE_PTS[grades[i]]||0)*CREDITS[i]; });
+  return Math.round((sum/TOTAL_CR)*100)/100;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RANK ESTIMATION
+══════════════════════════════════════════════════════════ */
+function computeNewRank(newTG, studentRoll){
+  var better=0;
+  allRows.forEach(function(r){
+    if(r[0]===studentRoll) return;
+    var t=pf(r[C.TG]);
+    if(t!==null && t>newTG) better++;
+  });
+  return better+1;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RECOMPUTE (called on every bound change)
+══════════════════════════════════════════════════════════ */
+function recompute(){
+  if(!student) return;
+  simGrades = SUBJECTS.map(function(s,i){ return deriveGrade(student.subjectRanks[i], bounds[s]); });
+  simTG   = computeTG(simGrades);
+  simRank = computeNewRank(simTG, student.row[0]);
+  updateGradeChips();
+  renderLiveBar();
+  updateSummaryTable();
+}
+
+/* ══════════════════════════════════════════════════════════
+   CURVE SVG
+   Normal distribution visualisation per subject.
+   x-axis = class rank (1 → 310)
+   y-axis = probability density (illustrative bell curve)
+   Coloured zones show grade bands; dashed lines = cutoffs;
+   solid blue line = student's fixed rank in this subject.
+══════════════════════════════════════════════════════════ */
+var CW=320, CH=82;    /* SVG viewBox dimensions */
+var CPAD=14;          /* left/right padding (px) */
+var CBAR=7;           /* bottom coloured bar height */
+var CTOP=6;           /* top margin for labels */
+var CBOT=CH-CBAR-2;   /* y-coordinate of curve baseline */
+var MAXR=310;         /* total students */
+var MU=155, SIG=58;   /* normal PDF parameters */
+
+function rankToX(rank){
+  return CPAD + ((rank-1)/(MAXR-1))*(CW-2*CPAD);
+}
+function normY(rank){
+  var v = Math.exp(-0.5*Math.pow((rank-MU)/SIG,2));
+  return CBOT - v*(CBOT-CTOP-10);
+}
+
+function renderCurveSVG(si){
+  if(!student) return '';
+  var s  = SUBJECTS[si];
+  var b  = bounds[s];
+  var mr = student.subjectRanks[si];
+
+  /* Zone rank ranges [start, end] inclusive */
+  var zones = [
+    [1,           b[0]],
+    [b[0]+1,      b[1]],
+    [b[1]+1,      b[2]],
+    [b[2]+1,      b[3]],
+    [b[3]+1,      b[4]],
+    [b[4]+1,      b[5]],
+    [b[5]+1,      MAXR]
+  ];
+
+  var svg='';
+
+  /* ── Zone fills under the bell curve ── */
+  for(var zi=0;zi<7;zi++){
+    var rs=Math.max(1,zones[zi][0]);
+    var re=Math.min(MAXR,zones[zi][1]);
+    if(rs>re) continue;
+
+    /* Polygon: base-left → along curve → base-right → close */
+    var pts=[rankToX(rs).toFixed(1)+','+CBOT];
+    for(var r=rs;r<=re;r++){
+      pts.push(rankToX(r).toFixed(1)+','+normY(r).toFixed(1));
+    }
+    pts.push(rankToX(re).toFixed(1)+','+CBOT);
+    svg+='<path d="M '+pts.join(' L ')+' Z" fill="var('+ZONE_FILL[zi]+')"/>';
+
+    /* Coloured bar segment at very bottom */
+    var bx1=rankToX(rs), bx2=rankToX(Math.min(re,MAXR));
+    var bw=(bx2-bx1).toFixed(1);
+    if(parseFloat(bw)>0.5){
+      svg+='<rect x="'+bx1.toFixed(1)+'" y="'+(CH-CBAR)+'" width="'+bw+'" height="'+CBAR+'" fill="var('+ZONE_BAR[zi]+')" opacity="0.75"/>';
+    }
+
+    /* Grade label centred in zone (only if wide enough) */
+    var zw=bx2-bx1;
+    if(zw>16){
+      var lx=((bx1+bx2)/2).toFixed(1);
+      svg+='<text x="'+lx+'" y="19" text-anchor="middle" font-size="7" font-weight="600" fill="var('+ZONE_BAR[zi]+')" font-family="JetBrains Mono,monospace">'+ALL_GRADES[zi]+'</text>';
+    }
+  }
+
+  /* ── Bell curve line ── */
+  var cpts=[];
+  for(var r=1;r<=MAXR;r++) cpts.push(rankToX(r).toFixed(1)+','+normY(r).toFixed(1));
+  svg+='<polyline points="'+cpts.join(' ')+'" fill="none" stroke="var(--navy)" stroke-width="1.4" opacity="0.4" stroke-linejoin="round"/>';
+
+  /* ── Boundary dashed lines ── */
+  for(var bi=0;bi<6;bi++){
+    var bv=b[bi];
+    if(bv>0&&bv<MAXR){
+      var bx=rankToX(bv).toFixed(1);
+      svg+='<line x1="'+bx+'" y1="'+CTOP+'" x2="'+bx+'" y2="'+CBOT+'" stroke="var(--border)" stroke-width="1" stroke-dasharray="3,2.5"/>';
+    }
+  }
+
+  /* ── Student rank marker ── */
+  if(mr!==null){
+    var mx=rankToX(mr).toFixed(1);
+    var my=normY(mr).toFixed(1);
+    /* Solid vertical line */
+    svg+='<line x1="'+mx+'" y1="'+CTOP+'" x2="'+mx+'" y2="'+CBOT+'" stroke="var(--blue)" stroke-width="2"/>';
+    /* Dot at curve intersection */
+    svg+='<circle cx="'+mx+'" cy="'+my+'" r="3.5" fill="var(--blue)" stroke="var(--surface)" stroke-width="1.5"/>';
+    /* Rank label — avoid edges */
+    var la = mr>240?'end':'start';
+    var lo = mr>240?-6:6;
+    var lx2=(parseFloat(mx)+lo).toFixed(1);
+    var ly=(parseFloat(my)-7).toFixed(1);
+    svg+='<text x="'+lx2+'" y="'+ly+'" text-anchor="'+la+'" font-size="8" font-weight="700" fill="var(--blue)" font-family="JetBrains Mono,monospace">#'+mr+'</text>';
+  }
+
+  /* ── Axis edge labels ── */
+  svg+='<text x="'+CPAD+'" y="'+(CH-1)+'" text-anchor="middle" font-size="6.5" fill="var(--light)" font-family="DM Sans,sans-serif">1</text>';
+  svg+='<text x="'+(CW-CPAD)+'" y="'+(CH-1)+'" text-anchor="middle" font-size="6.5" fill="var(--light)" font-family="DM Sans,sans-serif">'+MAXR+'</text>';
+
+  return '<svg viewBox="0 0 '+CW+' '+CH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">'+svg+'</svg>';
+}
+
+function refreshAllCurves(){
+  SUBJECTS.forEach(function(s,i){
+    var el=document.getElementById('curve-'+i);
+    if(el) el.innerHTML=renderCurveSVG(i);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER STUDENT CARD
+══════════════════════════════════════════════════════════ */
+function renderStudentCard(){
+  var st=student, roll=st.row[0], name=st.row[1], sec=st.row[2], pr=prog(roll);
+  document.getElementById('s-card').innerHTML =
+    '<div class="s-av">'+ini(name)+'</div>'+
+    '<div><div class="s-name">'+name+'</div>'+
+    '<div class="s-meta">'+
+      '<span class="badge '+(pr==='IPM'?'bipm':'bpgp')+'">'+pr+'</span>'+
+      '<span class="badge bsec">Sec '+sec+'</span>'+
+      '<span style="color:var(--light)">'+roll+'</span>'+
+    '</div></div>'+
+    '<div class="s-stats">'+
+      '<div class="s-stat"><div class="s-stat-v" style="color:var(--blue)">'+(st.tg||'—')+'</div><div class="s-stat-l">T3 TGPA</div></div>'+
+      '<div class="s-stat"><div class="s-stat-v" style="color:var(--indigo)">'+rankBadge(st.t3r)+'</div><div class="s-stat-l">T3 Rank</div></div>'+
+      '<div class="s-stat"><div class="s-stat-v" style="color:var(--green)">'+(st.cg||'—')+'</div><div class="s-stat-l">CGPA</div></div>'+
+      '<div class="s-stat"><div class="s-stat-v" style="color:var(--amber)">'+rankBadge(st.orank)+'</div><div class="s-stat-l">Ovr Rank</div></div>'+
+    '</div>';
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER SUBJECT GRID
+══════════════════════════════════════════════════════════ */
+function renderSubjectGrid(){
+  document.getElementById('subj-grid').innerHTML = SUBJECTS.map(function(s,i){
+    var rank=student.subjectRanks[i], origGrade=student.subjectGrades[i];
+    return '<div class="subj-card" id="sc-'+i+'">'+
+
+      /* ── Card header: subject name + rank ── */
+      '<div class="sc-head">'+
+        '<div>'+
+          '<div class="sc-name">'+s+'</div>'+
+          '<div class="sc-cr">'+CREDITS[i]+' credit'+(CREDITS[i]!==1?'s':'')+'</div>'+
+        '</div>'+
+        '<div class="sc-rank">'+
+          '<div class="sc-rank-n">#'+(rank!==null?rank:'?')+'</div>'+
+          '<div class="sc-rank-l">your rank</div>'+
+        '</div>'+
+      '</div>'+
+
+      /* ── Distribution curve ── */
+      '<div class="sc-curve" id="curve-'+i+'">'+renderCurveSVG(i)+'</div>'+
+
+      /* ── Grade display row ── */
+      '<div class="sc-grade-row">'+
+        '<span class="sc-grade-label">Grade</span>'+
+        '<span class="sim-chip gc gB" id="chip-'+i+'">—</span>'+
+        '<span class="was-sep">was</span>'+
+        gradeChip(origGrade)+
+        '<span id="delta-'+i+'" class="delta-ico delta-eq"></span>'+
+      '</div>'+
+
+      /* ── Boundary inputs ── */
+      '<div class="sc-bounds">'+
+        '<div class="sc-bounds-label">Grade cutoffs &mdash; last rank that earns each grade</div>'+
+        '<div class="bounds-grid">'+
+          BND_NAMES.map(function(g,gi){
+            return '<div class="bound-cell">'+
+              '<div class="bound-lbl">'+g+'&nbsp;&le;</div>'+
+              '<div class="bound-inp-row">'+
+                '<button class="bound-btn" onclick="adjustBound('+i+','+gi+',-1)" title="-1">&#8722;</button>'+
+                '<input class="bound-inp" id="b-'+i+'-'+gi+'" type="number" min="0" max="320" '+
+                  'value="'+bounds[s][gi]+'" oninput="onBoundChange('+i+','+gi+',this.value)">'+
+                '<button class="bound-btn" onclick="adjustBound('+i+','+gi+',1)" title="+1">+</button>'+
+              '</div>'+
+            '</div>';
+          }).join('')+
+        '</div>'+
+      '</div>'+
+
+    '</div>';/* end subj-card */
+  }).join('');
+}
+
+/* ══════════════════════════════════════════════════════════
+   BOUND CHANGE HANDLERS
+══════════════════════════════════════════════════════════ */
+function onBoundChange(si, gi, val){
+  var s=SUBJECTS[si];
+  var v=parseInt(val,10);
+  if(isNaN(v)||v<0) v=0;
+  if(v>320) v=320;
+  bounds[s][gi]=v;
+  /* Update only this subject's curve — fast & targeted */
+  var el=document.getElementById('curve-'+si);
+  if(el) el.innerHTML=renderCurveSVG(si);
+  recompute();
+}
+
+function adjustBound(si, gi, delta){
+  var inp=document.getElementById('b-'+si+'-'+gi);
+  if(!inp) return;
+  var v=clamp((parseInt(inp.value,10)||0)+delta, 0, 320);
+  inp.value=v;
+  onBoundChange(si, gi, v);
+}
+
+/* ══════════════════════════════════════════════════════════
+   UPDATE GRADE CHIPS (live, no full re-render)
+══════════════════════════════════════════════════════════ */
+function updateGradeChips(){
+  SUBJECTS.forEach(function(s,i){
+    var sg=simGrades[i], og=student.subjectGrades[i];
+    var chip=document.getElementById('chip-'+i);
+    var delta=document.getElementById('delta-'+i);
+    var card=document.getElementById('sc-'+i);
+    if(!chip) return;
+
+    chip.className='sim-chip gc '+(GRADE_CLS[sg]||'gB');
+    chip.textContent=sg;
+
+    /* Highlight the active boundary input */
+    BND_NAMES.forEach(function(g,gi){
+      var inp=document.getElementById('b-'+i+'-'+gi);
+      if(inp) inp.classList.toggle('active-bound', g===sg);
+    });
+
+    /* Delta indicator */
+    var op=GRADE_PTS[og]||0, sp=GRADE_PTS[sg]||0;
+    if(sp>op){
+      delta.textContent='▲ +1'; delta.className='delta-ico delta-up';
+      if(sp-op>1){ delta.textContent='▲ +'+(sp-op); }
+    } else if(sp<op){
+      delta.textContent='▼ −1'; delta.className='delta-ico delta-dn';
+      if(op-sp>1){ delta.textContent='▼ −'+(op-sp); }
+    } else {
+      delta.textContent=''; delta.className='delta-ico delta-eq';
+    }
+
+    if(card) card.classList.toggle('changed', sg!==og);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   LIVE BAR
+══════════════════════════════════════════════════════════ */
+function renderLiveBar(){
+  var st=student;
+  var dtg=simTG-(st.tg||0);
+  var drk=(st.t3r||0)-simRank;
+
+  var tgDelta = Math.abs(dtg)<0.005
+    ? '<span class="live-delta ld-eq">= no change</span>'
+    : '<span class="live-delta '+(dtg>0?'ld-up':'ld-dn')+'">'+(dtg>0?'▲ +':'▼ ')+Math.abs(dtg).toFixed(2)+'</span>';
+  var rkDelta = drk===0
+    ? '<span class="live-delta ld-eq">= no change</span>'
+    : '<span class="live-delta '+(drk>0?'ld-up':'ld-dn')+'">'+(drk>0?'▲ −':'▼ +')+Math.abs(drk)+' place'+(Math.abs(drk)!==1?'s':'')+'</span>';
+
+  document.getElementById('live-bar').innerHTML=
+    '<div class="live-blk"><div class="live-lbl">Current TGPA</div>'+
+      '<div class="live-val" style="color:var(--blue)">'+(st.tg||'—')+'</div></div>'+
+    '<div class="live-arrow">&#8594;</div>'+
+    '<div class="live-blk"><div class="live-lbl">Simulated TGPA</div>'+
+      '<div class="live-val" style="color:var(--blue)">'+simTG.toFixed(2)+'</div></div>'+
+    tgDelta+
+    '<div class="live-sep"></div>'+
+    '<div class="live-blk"><div class="live-lbl">Current T3 Rank</div>'+
+      '<div class="live-val" style="color:var(--indigo)">'+(st.t3r||'—')+'</div></div>'+
+    '<div class="live-arrow">&#8594;</div>'+
+    '<div class="live-blk"><div class="live-lbl">Simulated Rank</div>'+
+      '<div class="live-val" style="color:var(--indigo)">'+simRank+'</div></div>'+
+    rkDelta;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SUMMARY TABLE
+══════════════════════════════════════════════════════════ */
+function renderSummaryTable(){
+  document.getElementById('sum-tbl').innerHTML =
+    '<thead><tr>'+
+      '<th>Subject</th>'+
+      '<th>Credits</th>'+
+      '<th>Your Rank</th>'+
+      '<th>Current Grade</th>'+
+      '<th>Simulated Grade</th>'+
+      '<th>Change</th>'+
+    '</tr></thead>'+
+    '<tbody id="sum-tbody"></tbody>';
+  updateSummaryTable();
+}
+
+function updateSummaryTable(){
+  if(!student) return;
+  var tbody=document.getElementById('sum-tbody');
+  if(!tbody) return;
+  var rows = SUBJECTS.map(function(s,i){
+    var og=student.subjectGrades[i], sg=simGrades[i]||'—';
+    var op=GRADE_PTS[og]||0, sp=GRADE_PTS[sg]||0;
+    var diff=sp-op;
+    var delta = diff>0
+      ? '<span class="sum-delta-up">▲ +'+(diff)+' pt'+(diff!==1?'s':'')+'</span>'
+      : diff<0
+      ? '<span class="sum-delta-dn">▼ '+(diff)+' pt'+(Math.abs(diff)!==1?'s':'')+'</span>'
+      : '<span style="color:var(--light)">—</span>';
+    var rank=student.subjectRanks[i];
+    return '<tr>'+
+      '<td>'+s+'</td>'+
+      '<td><span class="sum-rank">'+CREDITS[i]+'</span></td>'+
+      '<td><span class="sum-rank">#'+(rank!==null?rank:'?')+'</span></td>'+
+      '<td>'+gradeChip(og)+'</td>'+
+      '<td>'+gradeChip(sg)+'</td>'+
+      '<td>'+delta+'</td>'+
+    '</tr>';
+  }).join('');
+  /* TGPA summary row */
+  var tgdiff=Math.round((simTG-(student.tg||0))*100)/100;
+  rows += '<tr class="sum-tgpa-row">'+
+    '<td colspan="3">TGPA (T3)</td>'+
+    '<td>'+gradeChip('—'.replace('—',student.tg||'—'))+'<span style="font-family:\'JetBrains Mono\',monospace;font-size:.78rem;color:var(--blue);font-weight:700">'+(student.tg||'—')+'</span></td>'+
+    '<td><span style="font-family:\'JetBrains Mono\',monospace;font-size:.78rem;color:var(--blue);font-weight:700">'+simTG.toFixed(2)+'</span></td>'+
+    '<td>'+(Math.abs(tgdiff)<0.005?'<span style="color:var(--light)">—</span>':tgdiff>0?'<span class="sum-delta-up">▲ +'+tgdiff+'</span>':'<span class="sum-delta-dn">▼ '+tgdiff+'</span>')+'</td>'+
+  '</tr>';
+  tbody.innerHTML=rows;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SCENARIOS
+══════════════════════════════════════════════════════════ */
+function saveScenario(){
+  if(!student){ toast('Select a student first'); return; }
+  var nameInput=document.getElementById('scen-name').value.trim();
+  var name=nameInput||('Case '+(scenarios.length+1));
+  scenarios.push({
+    name:name,
+    bounds:JSON.parse(JSON.stringify(bounds)),
+    grades:simGrades.slice(),
+    tg:simTG,
+    t3r:simRank
+  });
+  document.getElementById('scen-name').value='';
+  updateScenarioCount();
+  renderScenarioTable();
+  toast('Saved "'+name+'"');
+}
+
+function deleteScenario(idx){
+  scenarios.splice(idx,1);
+  updateScenarioCount();
+  renderScenarioTable();
+  toast('Scenario removed');
+}
+
+function loadScenarioBounds(idx){
+  var sc=scenarios[idx]; if(!sc) return;
+  SUBJECTS.forEach(function(s,i){
+    bounds[s]=sc.bounds[s].slice();
+    BND_NAMES.forEach(function(g,gi){
+      var inp=document.getElementById('b-'+i+'-'+gi);
+      if(inp) inp.value=bounds[s][gi];
+    });
+  });
+  refreshAllCurves();
+  recompute();
+  toast('Loaded bounds from "'+sc.name+'"');
+}
+
+function clearScenarios(){
+  if(scenarios.length===0){ toast('No scenarios to clear'); return; }
+  scenarios=[];
+  updateScenarioCount();
+  document.getElementById('scen-wrap').style.display='none';
+  document.getElementById('empty-scen').style.display='block';
+  toast('All scenarios cleared');
+}
+
+function resetBounds(){
+  if(!student) return;
+  SUBJECTS.forEach(function(s,i){
+    bounds[s]=initBounds(student.subjectRanks[i]||60, student.subjectGrades[i]||'B');
+    BND_NAMES.forEach(function(g,gi){
+      var inp=document.getElementById('b-'+i+'-'+gi);
+      if(inp) inp.value=bounds[s][gi];
+    });
+  });
+  refreshAllCurves();
+  recompute();
+  toast('Bounds reset to current grades');
+}
+
+function updateScenarioCount(){
+  var n=scenarios.length;
+  document.getElementById('scen-count').textContent=n>0?(n+' scenario'+(n!==1?'s':'')):'';
+}
+
+/* ══════════════════════════════════════════════════════════
+   SCENARIO COMPARISON TABLE
+══════════════════════════════════════════════════════════ */
+function renderScenarioTable(){
+  if(scenarios.length===0){
+    document.getElementById('scen-wrap').style.display='none';
+    document.getElementById('empty-scen').style.display='block';
+    return;
+  }
+  document.getElementById('scen-wrap').style.display='block';
+  document.getElementById('empty-scen').style.display='none';
+
+  var st=student;
+
+  var hdr='<thead><tr>'+
+    '<th>Subject / Metric</th>'+
+    '<th class="col-curr">Current<br><small style="font-weight:400;font-size:.52rem;text-transform:none;letter-spacing:0">actual</small></th>'+
+    scenarios.map(function(sc,idx){
+      return '<th>'+sc.name+
+        '<button class="del-btn" onclick="deleteScenario('+idx+')" title="Remove">&#215;</button><br>'+
+        '<button class="load-btn" onclick="loadScenarioBounds('+idx+')" title="Restore these bounds">&#8635; load</button>'+
+        '</th>';
+    }).join('')+
+  '</tr></thead>';
+
+  var bodyRows=SUBJECTS.map(function(s,i){
+    var origGrade=st.subjectGrades[i], rank=st.subjectRanks[i];
+    var cells=scenarios.map(function(sc){
+      var sg=sc.grades[i], changed=sg!==origGrade;
+      var op=GRADE_PTS[origGrade]||0, sp2=GRADE_PTS[sg]||0;
+      var arrow=sp2>op?' <span class="cell-up">&#9650;</span>':sp2<op?' <span class="cell-dn">&#9660;</span>':'';
+      return '<td style="'+(changed?'font-weight:600':'')+'">'+gradeChip(sg)+arrow+'</td>';
+    }).join('');
+    return '<tr>'+
+      '<td><strong>'+s+'</strong> '+
+      '<span style="font-size:.58rem;font-family:\'JetBrains Mono\',monospace;color:var(--muted)">#'+(rank!==null?rank:'?')+'</span></td>'+
+      '<td class="col-curr">'+gradeChip(origGrade)+'</td>'+
+      cells+'</tr>';
+  }).join('');
+
+  var tgCells=scenarios.map(function(sc){
+    var d=sc.tg-(st.tg||0);
+    var dstr=Math.abs(d)<0.005?'':' <span class="'+(d>0?'cell-up':'cell-dn')+'">'+(d>0?'▲+':'▼')+Math.abs(d).toFixed(2)+'</span>';
+    return '<td><strong style="color:var(--blue);font-family:\'DM Serif Display\',serif;font-size:.9rem">'+sc.tg.toFixed(2)+'</strong>'+dstr+'</td>';
+  }).join('');
+
+  var rkCells=scenarios.map(function(sc){
+    var d=(st.t3r||0)-sc.t3r;
+    var dstr=d===0?'':' <span class="'+(d>0?'cell-up':'cell-dn')+'">'+(d>0?'▲':'▼')+Math.abs(d)+'</span>';
+    return '<td><strong>'+sc.t3r+'</strong>'+dstr+'</td>';
+  }).join('');
+
+  document.getElementById('scen-tbl').innerHTML=hdr+'<tbody>'+bodyRows+
+    '<tr class="row-tg"><td><strong>TGPA (T3)</strong></td>'+
+      '<td class="col-curr"><strong style="color:var(--blue)">'+(st.tg||'—')+'</strong></td>'+
+      tgCells+'</tr>'+
+    '<tr class="row-rank"><td><strong>T3 Rank</strong></td>'+
+      '<td class="col-curr"><strong>'+(st.t3r||'—')+'</strong></td>'+
+      rkCells+'</tr>'+
+  '</tbody>';
+}
+
+/* ══════════════════════════════════════════════════════════
+   PDF EXPORT
+══════════════════════════════════════════════════════════ */
+function exportPDF(){
+  if(scenarios.length===0){ toast('Save at least one scenario first'); return; }
+  toast('Opening print dialog…');
+  setTimeout(function(){ window.print(); }, 300);
+}
+
+/* ══════════════════════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', function(){
+  var isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  document.getElementById('tbtn').innerHTML=isDark?'&#9728;':'&#9790;';
+  loadData();
+});
+</script>
+</body>
+</html>
