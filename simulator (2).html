@@ -319,7 +319,7 @@ async function loadData(){
     var txt=await r.text();
     var rows=parseCSV(txt);
     allRows=rows.slice(1).map(function(row){while(row.length<=C.ORANK+2)row.push("");return row.map(function(c){return String(c).trim();});}).filter(function(row){return row.slice(0,3).some(function(v){return v!=="";});});
-    setStatus(allRows.length+" students loaded","ok");
+    setStatus(allRows.length+" students data with Internals Loaded","ok");
     document.getElementById("einit").style.display="block";
   }catch(e){setStatus("Failed: "+e.message,"er");}
 }
